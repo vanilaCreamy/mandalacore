@@ -7,6 +7,7 @@ use App\Models\Delivery;
 use App\Models\School;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 new class extends Component
 {
@@ -273,7 +274,7 @@ new class extends Component
 
     <div class="">
         <label class="block text-sm font-medium text-gray-600 mb-2">
-            Jumlah Ompreng
+            Jumlah Ompreng / Paket
         </label>
         <input type="text" wire:model.live="amount"  @disabled($this->isOnTrip()) class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         @error('amount')
@@ -387,8 +388,11 @@ new class extends Component
                             <p class="font-medium text-gray-700">
                                 {{ ucfirst($log['category']->label()) }} - {{ $log->school->school_name }}
                             </p>
+                            <p class="font-light text-gray-700 text-sm">
+                                {{ $log->amount }} Ompreng/Paket
+                            </p>
                             <p class="text-xs text-gray-500">
-                                {{ $log['timestamp'] }}
+                                {{ Carbon::parse($log['timestamp'])->translatedFormat('l, d F Y - H:i') }}
                             </p>
                         </div>
 
