@@ -47,18 +47,18 @@
                         </p>
                 
                         <div class="space-y-1">
-                            @if (Auth::user()['role'] == 'admin')
+                            @if (Auth::user()->role->name == 'ADMIN')
                                 <livewire:buttons.nav-btn href="" color="gray">Kelola User</livewire:buttons.nav-btn> 
                                 @endif
-                            @if (Auth::user()['role'] == 'plok')
+                            @if (Auth::user()->role->name == 'PLOK')
                                 <livewire:buttons.nav-btn href="" color="gray">Input Data</livewire:buttons.nav-btn>
                             @endif
-                            @if (Auth::user()['role'] == 'plog')
+                            @if (Auth::user()->role->name == 'PLOG')
                                 <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-100 transition">
                                     Gizi
                                 </a>   
                             @endif
-                            @if (Auth::user()['role'] == 'driver')
+                            @if (Auth::user()->role->name == 'DRIVER')
                                 <livewire:buttons.nav-btn href="log_distribution" color="gray">Log Pengantaran</livewire:buttons.nav-btn>
                             @endif
                         </div>
