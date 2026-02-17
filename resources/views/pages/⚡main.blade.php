@@ -61,9 +61,9 @@ new class extends Component
                 </p>
 
                 <div class="flex gap-4">
-                    <a href="#program" 
+                    <a href="/login" 
                        class="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200">
-                        Lihat Program
+                        Login
                     </a>
 
                     <a href="/login" 
