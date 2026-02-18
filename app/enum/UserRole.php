@@ -2,18 +2,18 @@
 
 namespace App\enum;
 
-enum UserRole
+enum UserRole: string
 {
-    case ADMIN;
-    case KEPALA;
-    case PLOG;
-    case PLOK;
-    case ASLAP;
-    case PERSIAPAN;
-    case PENGOLAHAN;
-    case PEMORSIAN;
-    case DRIVER;
-    case PENCUCIAN;
+    case ADMIN = "ADMIN";
+    case KEPALA = "KEPALA";
+    case PLOG = "PLOG";
+    case PLOK = "PLOK";
+    case ASLAP = "ASLAP";
+    case PERSIAPAN = "PERSIAPAN";
+    case PENGOLAHAN = "PENGOLAHAN";
+    case PEMORSIAN = "PEMORSIAN";
+    case DRIVER = "DRIVER";
+    case PENCUCIAN = "PENCUCIAN";
 
     public function label()
     {

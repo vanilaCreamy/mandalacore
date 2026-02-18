@@ -56,3 +56,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'driver_role'])->group(function () {
     Route::livewire('/log_distribution', 'pages::log_distribution')->name('log_distribution');
 });
+
+Route::middleware(['auth', 'admin_role'])->group(function () {
+    Route::livewire('/manage/users', 'pages::user.users')->name('user.view');
+});
