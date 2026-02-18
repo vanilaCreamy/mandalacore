@@ -115,6 +115,10 @@ new class extends Component
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
                 Daftar Sekolah
             </a>
+            <a href="{{ route('school.log-portion') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
+                Log Porsi
+            </a>
         </div>
     </div>
 

@@ -13,4 +13,9 @@ class SchoolPortion extends Model
         'teacher_portions',
         'non_teacher_portions',
     ];
+
+    public function school()
+    {
+        return $this->hasOne(School::class, 'id', 'school_id');
+    }
 }

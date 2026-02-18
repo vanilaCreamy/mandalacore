@@ -70,7 +70,8 @@ Route::middleware(['auth', 'admin_role'])->group(function () {
 
     Route::livewire('/manage/schools', 'pages::school.school-view')->name('school.view');
     Route::livewire('/manage/schools/create', 'pages::school.school-create')->name('school.create');
-    Route::livewire('/manage/schools/portions', 'pages::school.school-portion-index')->whereNumber('school_id')->name('school.portion');
+    Route::livewire('/manage/schools/portions', 'pages::school.school-portion-index')->name('school.portion');
+    Route::livewire('/manage/schools/portions/log', 'pages::school.log-portion')->name('school.log-portion');
     Route::livewire('/manage/schools/{school_id}', 'pages::school.school-detail')->whereNumber('school_id')->name('school.detail');
     Route::livewire('/manage/schools/{school_id}/edit', 'pages::school.school-edit')->whereNumber('school_id')->name('school.edit');
 
