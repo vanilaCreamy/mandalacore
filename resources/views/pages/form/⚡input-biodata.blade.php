@@ -44,7 +44,7 @@ new class extends Component
     {
         
         $this->validate([
-            'nik' => 'nullable|numeric|digits:16',
+            'nik' => 'nullable|numeric|digits:16|unique:user_informations,nik,'. Auth::id(),
             'nomor_kk' => 'nullable|numeric|digits:16',
             'fullname' => 'nullable|string|max:255',
             'education' => 'nullable|string',
