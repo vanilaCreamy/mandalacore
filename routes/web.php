@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('/biodata/update', 'pages::form.input-biodata')->name('form.biodata');
     
     Route::livewire('/profile', 'pages::profile')->name('profile');
+    Route::livewire('/change-password', 'pages::change-password')->name('change_password');
 
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

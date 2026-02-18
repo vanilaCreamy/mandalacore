@@ -75,13 +75,9 @@
                         </p>
                 
                         <div class="space-y-1">
-                            <a href="{{ route('profile') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                                Profile
-                            </a>
-                            <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                                Ubah Password
-                            </a>
-                
+                            <livewire:buttons.nav-btn href="profile" scope="profile" color="gray">Profile</livewire:buttons.nav-btn> 
+                            <livewire:buttons.nav-btn href="change_password" scope="change_password" color="gray">Ubah Password</livewire:buttons.nav-btn> 
+            
                             <form method="POST" action="">
                                 @csrf
                                 <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition">
