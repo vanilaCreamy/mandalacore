@@ -32,6 +32,16 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('school_portions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('school_id')->constrained('schools', 'id')->cascadeOnUpdate();
+            $table->integer('small_portions')->default(0);
+            $table->integer('big_portions')->default(0);
+            $table->integer('teacher_portions')->default(0);
+            $table->integer('non_teacher_portions')->default(0);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -39,6 +49,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('school_portions');
         Schema::dropIfExists('schools');
     }
 };
