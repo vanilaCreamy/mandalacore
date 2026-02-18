@@ -10,24 +10,40 @@ new class extends Component
     use WithFileUploads;
 
     public $photo;
+    public $photoPath;
+
+    public function mount()
+    {
+        $user = Auth::user();
+
+        if (Storage::disk('public')->exists("profile/{$user->id}.jpg")) {
+            $this->photoPath = "profile/{$user->id}.jpg";
+        } elseif (Storage::disk('public')->exists("profile/{$user->id}.png")) {
+            $this->photoPath = "profile/{$user->id}.png";
+        }
+    }
 
     public function savePhoto()
     {
         $this->validate([
-            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'required|image|mimes:jpg,png|max:2048',
         ]);
 
         $user = Auth::user();
 
         $extension = $this->photo->getClientOriginalExtension();
         $filename = $user->id . '.' . $extension;
+        $path = 'profile/' . $filename;
 
-        // Hapus foto lama jika ada
-        Storage::disk('public')->delete($user->id . '.jpg');
-        Storage::disk('public')->delete($user->id . '.png');
+        // hapus semua kemungkinan lama
+        Storage::disk('public')->delete("profile/{$user->id}.jpg");
+        Storage::disk('public')->delete("profile/{$user->id}.png");
 
-        // Simpan foto baru
+        // simpan baru
         $this->photo->storeAs('profile', $filename, 'public');
+
+        // update state
+        $this->photoPath = $path;
 
         $this->photo = null;
 
@@ -58,16 +74,9 @@ new class extends Component
 
             {{-- Foto Profil --}}
             <div class="w-40 h-40 rounded-xl overflow-hidden border bg-slate-100 flex items-center justify-center">
-                @php
-                    $user = auth()->user();
-                    $jpg = 'profile/' . $user->id . '.jpg';
-                    $png = 'profile/' . $user->id . '.png';
-                @endphp
-
-                @if(Storage::disk('public')->exists($jpg))
-                    <img src="{{ asset('storage/'.$jpg) }}" class="w-full h-full object-cover">
-                @elseif(Storage::disk('public')->exists($png))
-                    <img src="{{ asset('storage/'.$png) }}" class="w-full h-full object-cover">
+                @if($photoPath)
+                    <img src="{{ asset('storage/'.$photoPath) . '?v=' . filemtime(storage_path('app/public/'.$photoPath)) }}" 
+                         class="w-full h-full object-cover">
                 @else
                     <span class="text-slate-400 text-sm">Belum ada foto</span>
                 @endif
@@ -85,6 +94,8 @@ new class extends Component
                                file:text-sm file:font-semibold
                                file:bg-blue-50 file:text-blue-700
                                hover:file:bg-blue-100"/>
+                            
+                        <div class="not-data-loading:hidden">Uploading...</div>
                         @error('photo')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
