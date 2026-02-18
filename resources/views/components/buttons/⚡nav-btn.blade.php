@@ -5,11 +5,12 @@ use Livewire\Component;
 new class extends Component
 {
     public string $href;
+    public string $scope = '';
     public string $color = 'blue';
 
     public function isActive()
     {
-        return request()->url() === url($this->href);
+        return request()->routeIs($this->scope);
     }
 };
 ?>

@@ -26,6 +26,7 @@ new class extends Component
     public $subdistrict;
     public $village;
     public $address;
+    public $joined_date;
 
     public $isEdit = false;
 
@@ -43,21 +44,22 @@ new class extends Component
     {
         
         $this->validate([
-            'nik' => 'required|numeric|digits:16',
-            'nomor_kk' => 'required|numeric|digits:16',
-            'fullname' => 'required|string|max:255',
-            'education' => 'required|string',
-            'place_of_birth' => 'required|string',
-            'date_of_birth' => 'required|date',
-            'phone_number' => 'required|string|max:15',
-            'gender' => 'required',
-            'religion' => 'required',
-            'maried_status' => 'required',
-            'province' => 'required',
-            'regency' => 'required',
-            'subdistrict' => 'required',
-            'village' => 'required',
-            'address' => 'required',
+            'nik' => 'nullable|numeric|digits:16',
+            'nomor_kk' => 'nullable|numeric|digits:16',
+            'fullname' => 'nullable|string|max:255',
+            'education' => 'nullable|string',
+            'place_of_birth' => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+            'phone_number' => 'nullable|string|max:15',
+            'gender' => 'nullable',
+            'religion' => 'nullable',
+            'maried_status' => 'nullable',
+            'province' => 'nullable',
+            'regency' => 'nullable',
+            'subdistrict' => 'nullable',
+            'village' => 'nullable',
+            'address' => 'nullable',
+            'joined_date' => 'nullable',
         ]) ;
 
         UserInformation::updateOrCreate(
@@ -79,11 +81,14 @@ new class extends Component
                 'subdistrict' => $this->subdistrict,
                 'village' => $this->village,
                 'address' => $this->address,
+                'joined_date' => $this->joined_date,
             ]
         );
 
         session()->flash('success', 'Biodata berhasil disimpan.');
         $this->isEdit = true;
+
+        redirect('/biodata');
     }
 };
 ?>
@@ -221,6 +226,12 @@ new class extends Component
         <div>
             <label>Desa</label>
             <input type="text" wire:model="village" class="w-full border rounded-lg p-2">
+            @error('village') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+        </div>
+
+        <div>
+            <label>Tanggal Masuk</label>
+            <input type="date" wire:model="joined_date" class="w-full border rounded-lg p-2">
             @error('village') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
         </div>
     

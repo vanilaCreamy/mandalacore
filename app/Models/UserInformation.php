@@ -36,5 +36,14 @@ class UserInformation extends Model
         'subdistrict',
         'village',
         'address',
+        'joined_date',
+        'bank_name',
+        'account_number',
+        'account_owner_name',
     ];
+
+    public function information()
+    {
+        return $this->hasOne(UserInformation::class);
+    }
 }

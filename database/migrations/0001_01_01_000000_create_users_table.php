@@ -41,11 +41,15 @@ return new class extends Migration
             $table->enum('gender', Gender::cases())->nullable();
             $table->enum('religion', Religion::cases())->nullable();
             $table->enum('maried_status', MarriedStatus::cases())->nullable();
-            $table->String('province', 100)->nullable();
-            $table->String('regency', 100)->nullable();
-            $table->String('subdistrict', 100)->nullable();
-            $table->String('village', 100)->nullable();
+            $table->string('province', 100)->nullable();
+            $table->string('regency', 100)->nullable();
+            $table->string('subdistrict', 100)->nullable();
+            $table->string('village', 100)->nullable();
             $table->text('address')->nullable();
+            $table->text('joined_date')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('account_number')->nullable();
+            $table->string('account_owner_name')->nullable();
             $table->timestamps();
         });
 
