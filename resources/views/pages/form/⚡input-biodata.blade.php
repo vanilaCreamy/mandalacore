@@ -3,9 +3,9 @@
 use Livewire\Component;
 use App\Models\UserInformation;
 use Illuminate\Support\Facades\Auth;
-use App\Enum\Gender;
-use App\Enum\Religion;
-use App\Enum\MarriedStatus;
+use App\enum\Gender;
+use App\enum\Religion;
+use App\enum\MarriedStatus;
 
 
 new class extends Component
