@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\enum\Gender;
+use App\enum\MarriedStatus;
+use App\enum\Religion;
 use Illuminate\Database\Eloquent\Model;
 
 class UserInformation extends Model
@@ -41,6 +44,20 @@ class UserInformation extends Model
         'account_number',
         'account_owner_name',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'gender' => Gender::class,
+            'religion' => Religion::class,
+            'maried_status' => MarriedStatus::class,
+        ];
+    }
 
     public function information()
     {
