@@ -11,7 +11,10 @@ Route::middleware(['guest'])->group(function () {
     Route::livewire('/login', 'pages::login-page')->name('login');
 
     Route::get('/linkstorage', function () {
-       Artisan::call('storage:link'); 
+        $targetFolder = $_SERVER['DOCUMENT_ROOT'].'/storage/app/public';
+        $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/public/storage';
+        symlink($targetFolder, $linkFolder);
+        echo 'Success';
     });
 });
 
