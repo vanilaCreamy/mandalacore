@@ -50,4 +50,9 @@ class User extends Authenticatable
             'role' => UserRole::class,
         ];
     }
+
+    public function information()
+    {
+        return $this->hasOne(UserInformation::class);
+    }
 }

@@ -19,7 +19,7 @@
             {{-- Sidebar --}}
             <aside 
                 :class="open ? 'translate-x-0' : '-translate-x-full'"
-                class="fixed z-30 inset-y-0 left-0 w-64 h-screen bg-white shadow-md transform transition-transform duration-300
+                class="fixed z-30 inset-y-0 left-0 w-44 h-screen bg-white shadow-md transform transition-transform duration-300
                     md:translate-x-0 md:static md:inset-0"
             >
                 <div class="p-4 border-b">
@@ -49,7 +49,7 @@
                         <div class="space-y-1">
                             @if (Auth::user()->role->name == 'ADMIN')
                                 <livewire:buttons.nav-btn href="user.view" scope="user.*" color="gray">Kelola User</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="" scope="" color="gray">Master Sekolah</livewire:buttons.nav-btn> 
+                                <livewire:buttons.nav-btn href="school.view" scope="school.*" color="gray">Master Sekolah</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Master Menu</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Master Bahan Baku</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Jadwal Distribusi</livewire:buttons.nav-btn> 

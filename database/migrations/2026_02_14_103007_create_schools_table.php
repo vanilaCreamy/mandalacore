@@ -18,18 +18,19 @@ return new class extends Migration
             $table->string('school_name',150);
             $table->text('address');
             $table->enum('school_level', SchoolLevel::cases());
-            $table->integer('small_portions');
-            $table->integer('big_portions');
-            $table->integer('teacher_portions');
-            $table->integer('non_teacher_portions');
+            $table->integer('small_portions')->default(0);
+            $table->integer('big_portions')->default(0);
+            $table->integer('teacher_portions')->default(0);
+            $table->integer('non_teacher_portions')->default(0);
             $table->string('pic_name');
-            $table->string('pic_position');
-            $table->string('pic_phone_number');
-            $table->string('pic_email');
-            $table->string('hm_name');
-            $table->string('hm_phone_number');
-            $table->string('hm_email');
+            $table->string('pic_position')->nullable();
+            $table->string('pic_phone_number')->nullable();
+            $table->string('pic_email')->nullable();
+            $table->string('hm_name')->nullable();
+            $table->string('hm_phone_number')->nullable();
+            $table->string('hm_email')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

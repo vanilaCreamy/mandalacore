@@ -17,11 +17,11 @@ class UserSeeder extends Seeder
     {
         $users = [
             ['name' => 'Admin', 'email' => 'admin@gmail.com', 'role' => UserRole::ADMIN],
-            ['name' => 'Kevin Egy Mayo', 'email' => 'kevin@gmail.com', 'role' => UserRole::KEPALA],
-            ['name' => 'Fuza Nur Uswah Azizah', 'email' => 'pudja@gmail.com', 'role' => UserRole::PLOG],
-            ['name' => 'Dani Nugraha', 'email' => 'nugrahadani@gmail.com', 'role' => UserRole::PLOK],
-            ['name' => 'Mahesa Dwi Putra', 'email' => 'mahesa@gmail.com', 'role' => UserRole::ASLAP],
-            ['name' => 'Yogi Suryana', 'email' => 'yogi@gmail.com', 'role' => UserRole::DRIVER],
+            // ['name' => 'Kevin Egy Mayo', 'email' => 'kevin@gmail.com', 'role' => UserRole::KEPALA],
+            // ['name' => 'Fuza Nur Uswah Azizah', 'email' => 'pudja@gmail.com', 'role' => UserRole::PLOG],
+            // ['name' => 'Dani Nugraha', 'email' => 'nugrahadani@gmail.com', 'role' => UserRole::PLOK],
+            // ['name' => 'Mahesa Dwi Putra', 'email' => 'mahesa@gmail.com', 'role' => UserRole::ASLAP],
+            // ['name' => 'Yogi Suryana', 'email' => 'yogi@gmail.com', 'role' => UserRole::DRIVER],
         ];
 
         foreach ($users as $user) {

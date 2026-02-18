@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
 
         return match ($role) {
             'ADMIN'   => redirect()->route('dashboard.admin'),
+            'HEAD'   => redirect()->route('dashboard.head'),
             'PLOG'   => redirect()->route('dashboard.plog'),
             'PLOK'   => redirect()->route('dashboard.plok'),
             'ASLAP'   => redirect()->route('dashboard.aslap'),
@@ -63,5 +64,14 @@ Route::middleware(['auth', 'driver_role'])->group(function () {
 });
 
 Route::middleware(['auth', 'admin_role'])->group(function () {
+
     Route::livewire('/manage/users', 'pages::user.users')->name('user.view');
+    Route::livewire('/manage/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
+
+    Route::livewire('/manage/schools', 'pages::school.school-view')->name('school.view');
+    Route::livewire('/manage/schools/create', 'pages::school.school-create')->name('school.create');
+    Route::livewire('/manage/schools/portions', 'pages::school.school-portion-index')->whereNumber('school_id')->name('school.portion');
+    Route::livewire('/manage/schools/{school_id}', 'pages::school.school-detail')->whereNumber('school_id')->name('school.detail');
+    Route::livewire('/manage/schools/{school_id}/edit', 'pages::school.school-edit')->whereNumber('school_id')->name('school.edit');
+
 });

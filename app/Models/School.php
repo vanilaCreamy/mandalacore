@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\enum\SchoolLevel;
 use Illuminate\Database\Eloquent\Model;
 
 class School extends Model
@@ -28,4 +29,21 @@ class School extends Model
         'hm_phone_number',
         'hm_email',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'school_level' => SchoolLevel::class,
+        ];
+    }
+
+    public function portions()
+    {
+        return $this->hasMany(SchoolPortion::class);
+    }
 }
