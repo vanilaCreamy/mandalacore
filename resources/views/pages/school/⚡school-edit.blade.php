@@ -12,10 +12,6 @@ new class extends Component
     public $school_name;
     public $address;
     public $school_level;
-    public $small_portions = 0;
-    public $big_portions = 0;
-    public $teacher_portions = 0;
-    public $non_teacher_portions = 0;
 
     public $pic_name;
     public $pic_position;
@@ -33,10 +29,6 @@ new class extends Component
         $this->school_name = $this->school->school_name;
         $this->address = $this->school->address;
         $this->school_level = $this->school->school_level->name;
-        $this->small_portions = $this->school->small_portions;
-        $this->big_portions = $this->school->big_portions;
-        $this->teacher_portions = $this->school->teacher_portions;
-        $this->non_teacher_portions = $this->school->non_teacher_portions;
         $this->pic_name = $this->school->pic_name;
         $this->pic_position = $this->school->pic_position;
         $this->pic_phone_number = $this->school->pic_phone_number;
@@ -53,11 +45,6 @@ new class extends Component
             'school_name' => 'required|string|max:255',
             'address' => 'required|string',
             'school_level' => 'required|string',
-
-            'small_portions' => 'required|integer|min:0',
-            'big_portions' => 'required|integer|min:0',
-            'teacher_portions' => 'nullable|integer|min:0',
-            'non_teacher_portions' => 'nullable|integer|min:0',
 
             'pic_name' => 'required|string|max:255',
             'pic_position' => 'nullable|string|max:255',
@@ -79,10 +66,6 @@ new class extends Component
                 'school_name' => $this->school_name,
                 'address' => $this->address,
                 'school_level' => $this->school_level,
-                'small_portions' => $this->small_portions,
-                'big_portions' => $this->big_portions,
-                'teacher_portions' => $this->teacher_portions,
-                'non_teacher_portions' => $this->non_teacher_portions,
                 'pic_name' => $this->pic_name,
                 'pic_position' => $this->pic_position,
                 'pic_phone_number' => $this->pic_phone_number,
@@ -161,45 +144,6 @@ new class extends Component
 
             </div>
         </div>
-
-
-        {{-- INFORMASI PORSI --}}
-        <div class="bg-white p-6 rounded-2xl shadow space-y-6">
-            <h2 class="font-semibold border-b pb-2">Informasi Porsi</h2>
-
-            <div class="grid md:grid-cols-4 gap-6">
-
-                <div>
-                    <label class="text-xs text-slate-500">Small Portions</label>
-                    <input type="number" wire:model="small_portions"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('small_portions') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Big Portions</label>
-                    <input type="number" wire:model="big_portions"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('big_portions') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Teacher Portions</label>
-                    <input type="number" wire:model="teacher_portions"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('teacher_portions') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Non Teacher Portions</label>
-                    <input type="number" wire:model="non_teacher_portions"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('non_teacher_portions') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-            </div>
-        </div>
-
 
         {{-- INFORMASI PIC --}}
         <div class="bg-white p-6 rounded-2xl shadow space-y-6">
