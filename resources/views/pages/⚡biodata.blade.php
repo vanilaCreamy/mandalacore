@@ -9,26 +9,7 @@ new class extends Component
     public $user_information;
 
     public $activeTab = 'personal';
-
-    public array $informasi_personal = [
-        'NIK' => '3207023011010001',
-        'Nomor KK' => '3207023453450004',
-        'Nama Lengkap' => 'Dani Nugraha',
-        'Gelar Belakang' => 'S.Ak.',
-        'Pendidikan' => 'D-iv/s-1 Akuntansi',
-        'Posisi' => 'Penata Layanan Operasional Keuangan',
-        'Tempat, Tgl Lahir' => 'Kabupaten Ciamis, 30 November 2001',
-        'Agama' => 'Islam',
-        'Jenis Kelamin' => 'Pria',
-        'Status Kawin' => 'Belum Kawin',
-        'NPWP' => '3207023011010001',
-        'No Hp' => '085624611146',
-        'Ukuran Baju' => 'L',
-        'Email' => 'nugrahaadani563@gmail.com',
-        'Alamat Sesuai KTP' => 'Dusun Ranji Rata Rt18/Rw06, Desa Cimari, Kecamatan Cikoneng, Kabupaten Ciamis, Provinsi Jawa Barat',
-        'Alamat Domisili' => 'Dusun Ranji Rata Rt18/Rw06, Desa Cimari, Kecamatan Cikoneng, Kabupaten Ciamis, Provinsi Jawa Barat',
-    ];
-
+    
     public function setTab($tab)
     {
         $this->activeTab = $tab;
