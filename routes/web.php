@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -8,6 +9,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['guest'])->group(function () {
     Route::livewire('/', 'pages::main');
     Route::livewire('/login', 'pages::login-page')->name('login');
+
+    Route::get('/linkstorage', function () {
+       Artisan::call('storage:link'); 
+    });
 });
 
 Route::middleware(['auth'])->group(function () {
