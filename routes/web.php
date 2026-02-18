@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -9,13 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['guest'])->group(function () {
     Route::livewire('/', 'pages::main');
     Route::livewire('/login', 'pages::login-page')->name('login');
-
-    Route::get('/linkstorage', function () {
-        $targetFolder = $_SERVER['DOCUMENT_ROOT'].'/storage/app/public';
-        $linkFolder = $_SERVER['DOCUMENT_ROOT'].'/public/storage';
-        symlink($targetFolder, $linkFolder);
-        echo 'Success';
-    });
 });
 
 Route::middleware(['auth'])->group(function () {
