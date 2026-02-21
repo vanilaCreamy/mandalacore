@@ -172,7 +172,7 @@ new class extends Component
 
                 {{-- TOTAL PORTION (HASIL SUM DELTA) --}}
                 <div class="mt-6 border-t pt-4 text-sm space-y-1">
-                    <ul class="grid grid-cols-4">
+                    <ul class="grid grid-cols-2 md:grid-cols-4">
                         <li>
                             <p>Porsi Kecil</p>
                             <span class="block font-semibold text-lg">
@@ -215,7 +215,7 @@ new class extends Component
 
         <h2 class="text-lg font-semibold">Tambah Histori Porsi</h2>
 
-        <div class="grid grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
 
             <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-600">Porsi Kecil (+ / -)</label>

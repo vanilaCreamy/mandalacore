@@ -50,7 +50,7 @@ new class extends Component
                     ? asset('storage/'.$jpg) 
                     : (Storage::disk('public')->exists($png) 
                         ? asset('storage/'.$png) 
-                        : asset('images/pic-default.jpg')) 
+                        : asset('images/ava-md.png')) 
             }}" 
             alt="Profile" 
             height="150" 

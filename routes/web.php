@@ -74,5 +74,12 @@ Route::middleware(['auth', 'admin_role'])->group(function () {
     Route::livewire('/manage/schools/portions/log', 'pages::school.log-portion')->name('school.log-portion');
     Route::livewire('/manage/schools/{school_id}', 'pages::school.school-detail')->whereNumber('school_id')->name('school.detail');
     Route::livewire('/manage/schools/{school_id}/edit', 'pages::school.school-edit')->whereNumber('school_id')->name('school.edit');
+    
+    Route::livewire('/manage/posyandu', 'pages::posyandu.posyandu-view')->name('posyandu.view');
+    Route::livewire('/manage/posyandu/create', 'pages::posyandu.posyandu-create')->name('posyandu.create');
+    Route::livewire('/manage/posyandu/portions', 'pages::posyandu.posyandu-portion-index')->name('posyandu.portion');
+    Route::livewire('/manage/posyandu/portions/log', 'pages::posyandu.log-portion')->name('posyandu.log-portion');
+    Route::livewire('/manage/posyandu/{posyandu_id}', 'pages::posyandu.posyandu-detail')->whereNumber('posyandu_id')->name('posyandu.detail');
+    Route::livewire('/manage/posyandu/{posyandu_id}/edit', 'pages::posyandu.posyandu-edit')->whereNumber('posyandu_id')->name('posyandu.edit');
 
 });

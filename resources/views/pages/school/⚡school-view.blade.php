@@ -20,6 +20,13 @@ new class extends Component
             ->withSum('portions', 'non_teacher_portions')
             ->get();
     }
+
+    public function delete_school($id)
+    {
+        $deleted_school = School::findOrFail($id);
+        $deleted_school->delete();
+        $this->loadSchools();
+    }
 };
 ?>
 
@@ -120,8 +127,14 @@ new class extends Component
                         <td class="px-4 py-3 text-center">
                             <div class="flex justify-center gap-2">
                                 <a href="{{ route('school.detail', ['school_id' => $school->id]) }}" class="text-blue-600 hover:underline text-xs">View</a>
-                                <a class="text-yellow-600 hover:underline text-xs">Edit</a>
-                                <a class="text-red-600 hover:underline text-xs">Hapus</a>
+                                <a href="{{ route('school.edit', ['school_id' => $school->id]) }}" class="text-yellow-600 hover:underline text-xs">Edit</a>
+                                <button 
+                                    wire:click="delete_school({{ $school->id }})"
+                                    wire:confirm="Yakin mau hapus sekolah ini?"
+                                    class="text-red-600 hover:underline text-xs"
+                                >
+                                    Hapus
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -202,9 +215,15 @@ new class extends Component
                 </div>
 
                 <div class="flex gap-2 pt-2">
-                    <a href="{{ route('school.detail', ['school_id' => $school->id]) }}" class="text-blue-600 text-xs">View</a>
-                    <a class="text-yellow-600 text-xs">Edit</a>
-                    <a class="text-red-600 text-xs">Hapus</a>
+                    <a href="{{ route('school.detail', ['school_id' => $school->id]) }}" class="text-blue-600 hover:underline text-xs">View</a>
+                    <a href="{{ route('school.edit', ['school_id' => $school->id]) }}" class="text-yellow-600 hover:underline text-xs">Edit</a>
+                    <button 
+                        wire:click="delete_school({{ $school->id }})"
+                        wire:confirm="Yakin mau hapus sekolah ini?"
+                        class="text-red-600 hover:underline text-xs"
+                    >
+                        Hapus
+                    </button>
                 </div>
 
             </div>

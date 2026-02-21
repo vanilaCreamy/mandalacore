@@ -50,6 +50,7 @@
                             @if (Auth::user()->role->name == 'ADMIN')
                                 <livewire:buttons.nav-btn href="user.view" scope="user.*" color="gray">Kelola User</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="school.view" scope="school.*" color="gray">Master Sekolah</livewire:buttons.nav-btn> 
+                                <livewire:buttons.nav-btn href="posyandu.view" scope="posyandu.*" color="gray">Master Posyandu</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Master Menu</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Master Bahan Baku</livewire:buttons.nav-btn> 
                                 <livewire:buttons.nav-btn href="" scope="" color="gray">Jadwal Distribusi</livewire:buttons.nav-btn> 

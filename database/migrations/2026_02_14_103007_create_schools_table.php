@@ -31,7 +31,7 @@ return new class extends Migration
 
         Schema::create('school_portions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('school_id')->constrained('schools', 'id')->cascadeOnUpdate();
+            $table->foreignId('school_id')->constrained('schools', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('small_portions')->default(0);
             $table->integer('big_portions')->default(0);
             $table->integer('teacher_portions')->default(0);
