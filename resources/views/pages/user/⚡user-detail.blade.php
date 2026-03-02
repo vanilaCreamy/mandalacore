@@ -5,6 +5,8 @@ use App\Models\User;
 
 new class extends Component
 {
+    public $breadcrumbs = [];
+
     public $user;
     public $profilePhoto;
 
@@ -22,11 +24,18 @@ new class extends Component
         } else {
             $this->profilePhoto = asset('images/pic-default.jpg');
         }
+
+        $this->breadcrumbs = [
+            ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'Pengguna', 'link' => route('user.view')],
+            ['label' => $this->user->name]
+        ];
     }
 };
 ?>
 
 <div class="max-w-5xl mx-auto space-y-6">
+    <x-breadcrumbs :items="$breadcrumbs" />
 
     {{-- ================= PROFILE CARD ================= --}}
     <div class="bg-white rounded-2xl shadow-sm p-6 mb-2">

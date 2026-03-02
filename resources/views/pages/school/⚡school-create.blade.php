@@ -3,6 +3,7 @@
 use Livewire\Component;
 use App\Models\School;
 use App\enum\SchoolLevel;
+use Carbon\Carbon;
 
 new class extends Component
 {
@@ -37,6 +38,36 @@ new class extends Component
             'hm_phone_number' => 'nullable|string|max:20',
             'hm_email' => 'nullable|email',
         ];
+    }
+
+    private function generateSchoolCode()
+    {
+        // Ambil level
+        $level = $this->school_level;
+
+        if (!$level) {
+            return null;
+        }
+
+        // Hitung jumlah sekolah dengan level yang sama
+        $count = School::where('school_level', $level)->count();
+
+        $index = $count + 1;
+        // Format jadi 3 digit
+        $indexFormatted = str_pad($index, 3, '0', STR_PAD_LEFT);
+
+        // Konversi enum name ke angka romawi
+        $roman = $level;
+
+        $year = Carbon::now()->year;
+
+        return "{$indexFormatted}/{$roman}/SKL-CPK2/{$year}";
+    }
+
+    public function updatedSchoolLevel($value)
+    {
+        // Contoh: auto generate preview kode sekolah
+        $this->school_code = $this->generateSchoolCode();
     }
 
     public function save()
@@ -89,16 +120,16 @@ new class extends Component
         <div class="bg-white p-6 rounded-2xl shadow space-y-6">
             <h2 class="font-semibold border-b pb-2">Informasi Sekolah</h2>
 
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-2 gap-2">
 
                 <div>
-                    <label class="text-xs text-slate-500">Kode Sekolah</label>
+                    <label class="text-xs text-slate-500">Kode Sekolah (Auto)</label>
                     <input type="text" wire:model="school_code"
-                           class="w-full border rounded-lg px-3 py-2">
+                           class="w-full border-b border-green-500 px-3 py-2" disabled>
                     @error('school_code') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
-                <div>
+                <div class="md:col-span-2">
                     <label class="text-xs text-slate-500">Nama Sekolah</label>
                     <input type="text" wire:model="school_name"
                            class="w-full border rounded-lg px-3 py-2">
@@ -114,7 +145,7 @@ new class extends Component
 
                 <div>
                     <label class="text-xs text-slate-500">Level Sekolah</label>
-                    <select wire:model="school_level"
+                    <select wire:model.live="school_level"
                             class="w-full border rounded-lg px-3 py-2">
                         <option value="">Pilih Level</option>
                         @foreach (SchoolLevel::cases() as $item)

@@ -18,6 +18,7 @@ class Posyandu extends Model
         'cadre_name',
         'cadre_phone_number',
         'cadre_email',
+        'route',
     ];
 
     public function portions(){

@@ -6,7 +6,7 @@ use App\enum\DriverCategory;
 use App\enum\DriverFlow;
 use Illuminate\Database\Eloquent\Model;
 
-class Delivery extends Model
+class PosyanduDelivery extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -17,9 +17,10 @@ class Delivery extends Model
         'timestamp',
         'category',
         'flow',
-        'school_id',
-        'amount',
-        'driver_id',
+        'posyandu_id',
+        'amount_bumil',
+        'amount_busui',
+        'driver_balita',
         'latitude',
         'longitude',
     ];
@@ -38,10 +39,9 @@ class Delivery extends Model
     }
 
     // RELATIONSHIP
-    public function school()
+    public function posyandu()
     {
-        return $this->belongsTo(School::class, 'school_id');
+        return $this->belongsTo(Posyandu::class, 'posyandu_id');
 
     }
-
 }

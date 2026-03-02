@@ -5,6 +5,9 @@ use App\Models\UserInformation;
 
 new class extends Component
 {
+    public $breadcrumbs = [];
+    public $selectedTab = 'umum';
+
     public $user;
     public $user_information;
 
@@ -24,14 +27,22 @@ new class extends Component
         if ($this->user_information === null){
             $this->user_information = UserInformation::updateOrCreate(['user_id'=>$this->user->id]);
         }
+
+        $this->breadcrumbs = [
+            ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'Biodata', 'link' => route('biodata')],
+        ];
+
+        // $this->selectedTab   
     }
 };
 ?>
 
-<div class="max-w-6xl mx-auto shadow-xl rounded-2xl space-y-6">
+<div class="rounded-2xl">
+    <x-breadcrumbs :items="$breadcrumbs" />
     
     {{-- BANNER --}}
-    <div class="bg-white">
+    <div class="">
         <div class="w-full relative overflow-hidden h-56 flex justify-center items-center text-2xl bg-gray-200 font-medium text-gray-400">
             <img src="{{ asset('images/bg_v2.webp') }}" alt="banner" height="150" class="block w-full h-full object-cover">
             <p class="absolute top-0 right-0 px-2 opacity-35 z-50 text-xs text-slate-700">{{ $this->user_information->updated_at }} {{ $user->updated_at }}</p>
@@ -101,39 +112,8 @@ new class extends Component
         
     </div>
 
-    {{-- TAB --}}
-    <div class="w-full bg-white">
-
-        {{-- TAB HEADER --}}
-        <div class="border-gray-200 bg-slate-200">
-            <nav class="flex flex-wrap">
-    
-                @php
-                    $tabs = [
-                        'personal' => 'Informasi Personal',
-                        'sppg' => 'SPPG',
-                        'payroll' => 'Payroll',
-                    ];
-                @endphp
-    
-                @foreach ($tabs as $key => $label)
-                    <button
-                        wire:click="setTab('{{ $key }}')"
-                        class="px-4 py-2 text-sm font-medium transition
-                        {{ $activeTab === $key
-                            ? 'bg-white text-slate-700'
-                            : 'text-gray-600 hover:text-slate-700 hover:bg-gray-100' }}">
-                        {{ $label }}
-                    </button>
-                @endforeach
-    
-            </nav>
-        </div>
-    
-        {{-- TAB CONTENT --}}
-        <div class="p-6 bg-white border border-gray-300 rounded-b-lg shadow-sm">
-    
-            @if ($activeTab === 'personal')
+    <x-tabs wire:model="selectedTab">
+        <x-tab name="umum" label="Data Personal" icon="o-users">
             <div>
                 <ul class="text-sm grid grid-cols-2 gap-4">
                     <li>
@@ -206,36 +186,34 @@ new class extends Component
                     </li>
                 </ul>
             </div>
-            @endif
-    
-            @if ($activeTab === 'sppg')
-                <div>
-                    <ul class="text-sm grid grid-cols-2 gap-4">
-                        <li>
-                            <h5 class="text-slate-500 text-xs font-semibold">ID SPPG</h5>
-                            <span class="text-md">ZBBERJFS</span>
-                        </li>
-                        <li>
-                            <h5 class="text-slate-500 text-xs font-semibold">No SK</h5>
-                            <span class="text-md">235.1.2025 Mandala - 7553</span>
-                        </li>
-                        <li>
-                            <h5 class="text-slate-500 text-xs font-semibold">SPPG</h5>
-                            <span class="text-md">SPPG Ciamis Panjalu Kertamandala 2</span>
-                        </li>
-                        <li>
-                            <h5 class="text-slate-500 text-xs font-semibold">Alamat SPPG</h5>
-                            <span class="text-md">Kertamandala, Kecamatan Panjalu, Kabupaten Ciamis, Provinsi Jawa Barat</span>
-                        </li>
-                        <li>
-                            {{-- <h5 class="text-slate-500 text-xs font-semibold">Status</h5> --}}
-                            <span class="text-md bg-lime-500 text-white rounded-md px-2 py-1">AKTIF</span>
-                        </li>
-                    </ul>
-                </div>
-            @endif
-    
-            @if ($activeTab === 'payroll')
+        </x-tab>
+        <x-tab name="sppg" label="SPPG" icon="o-sparkles">
+            <div>
+                <ul class="text-sm grid grid-cols-2 gap-4">
+                    <li>
+                        <h5 class="text-slate-500 text-xs font-semibold">ID SPPG</h5>
+                        <span class="text-md">ZBBERJFS</span>
+                    </li>
+                    <li>
+                        <h5 class="text-slate-500 text-xs font-semibold">No SK</h5>
+                        <span class="text-md">235.1.2025 Mandala - 7553</span>
+                    </li>
+                    <li>
+                        <h5 class="text-slate-500 text-xs font-semibold">SPPG</h5>
+                        <span class="text-md">SPPG Ciamis Panjalu Kertamandala 2</span>
+                    </li>
+                    <li>
+                        <h5 class="text-slate-500 text-xs font-semibold">Alamat SPPG</h5>
+                        <span class="text-md">Kertamandala, Kecamatan Panjalu, Kabupaten Ciamis, Provinsi Jawa Barat</span>
+                    </li>
+                    <li>
+                        {{-- <h5 class="text-slate-500 text-xs font-semibold">Status</h5> --}}
+                        <span class="text-md bg-lime-500 text-white rounded-md px-2 py-1">AKTIF</span>
+                    </li>
+                </ul>
+            </div>
+        </x-tab>
+        <x-tab name="payroll" label="Payroll" icon="o-banknotes">
             <div>
                 <ul class="text-sm grid grid-cols-1 gap-4">
                     <li>
@@ -264,9 +242,10 @@ new class extends Component
                     </li>
                 </ul>
             </div>
-            @endif
+        </x-tab>
+    </x-tabs>
 
-        </div>
-    
-    </div>
+
+    <div class="h-screen"></div>
+
 </div>

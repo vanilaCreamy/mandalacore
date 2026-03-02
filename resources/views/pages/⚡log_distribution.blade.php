@@ -3,7 +3,7 @@
 use Livewire\Component;
 use App\enum\DriverCategory;
 use App\enum\DriverFlow;
-use App\Models\Delivery;
+use App\Models\SchoolDelivery;
 use App\Models\School;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -21,7 +21,8 @@ new class extends Component
     public $category;
     public $flow;
     public $school_id;
-    public $amount;
+    public $amount_pk;
+    public $amount_pb;
     public $driver_id;
     public $latitude = null;
     public $longitude = null;
@@ -29,13 +30,18 @@ new class extends Component
 
     public function mount()
     {
-        $this->schools = School::all();
+        $driver = auth()->user();
 
-        $this->logs = Delivery::where('driver_id', auth()->id())
+        $this->driver_id = $driver->id;
+
+        // Ambil sekolah sesuai route driver
+        $this->schools = School::where('route', $driver->route->route)->get();
+
+        $this->logs = SchoolDelivery::where('driver_id', auth()->id())
             ->latest()
             ->get();
 
-        $this->last_log = Delivery::where('driver_id', auth()->id())
+        $this->last_log = SchoolDelivery::where('driver_id', auth()->id())
             ->latest()
             ->first();
 
@@ -46,13 +52,14 @@ new class extends Component
             // Karena category dan flow adalah enum
             $this->category  = $this->last_log->category->name;
             $this->school_id = $this->last_log->school_id;
-            $this->amount    = $this->last_log->amount;
+            $this->amount_pk    = $this->last_log->amount_pk;
+            $this->amount_pb    = $this->last_log->amount_pb;
         }
     }
 
     private function refreshLogs()
     {
-        $this->logs = Delivery::where('driver_id', Auth::id())
+        $this->logs = SchoolDelivery::where('driver_id', Auth::id())
             ->latest()
             ->get();
 
@@ -66,7 +73,8 @@ new class extends Component
             'category' => 'required',
             'flow' => 'required',
             'school_id' => 'required|exists:schools,id',
-            'amount' => 'required|numeric|min:1',
+            'amount_pk' => 'required|numeric|min:0',
+            'amount_pb' => 'required|numeric|min:0',
             'driver_id' => 'required|exists:users,id',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -80,18 +88,33 @@ new class extends Component
             return;
         }
 
-        $school = School::find($value);
+        $school = School::withSum('portions', 'small_portions')
+            ->withSum('portions', 'big_portions')
+            ->withSum('portions', 'teacher_portions')
+            ->withSum('portions', 'non_teacher_portions')
+            ->find($value);
 
         if (!$school) {
             return;
         }
 
-        $pk = $school->small_portions ?? 0;
-        $pb = $school->big_portions ?? 0;
-        $tp = $school->teacher_portions ?? 0;
-        $np = $school->non_teacher_portions ?? 0;
+        $teacher = $school->portions_sum_teacher_portions ?? 0;
+        $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
+        $tambahan = $teacher + $nonTeacher;
 
-        $this->amount = $pk + $pb + $tp + $np;
+        $small = $school->portions_sum_small_portions ?? 0;
+        $big = $school->portions_sum_big_portions ?? 0;
+
+        if ($big != 0) {
+            $bigFinal = $big + $tambahan;
+            $smallFinal = $small;
+        } else {
+            $smallFinal = $small + $tambahan;
+            $bigFinal = $big;
+        }
+
+        $this->amount_pk = $smallFinal;
+        $this->amount_pb = $bigFinal;
     }
 
     public function setLocation($lat, $lng)
@@ -149,7 +172,7 @@ new class extends Component
         $this->flow = DriverFlow::ARRIVE->name;
         $this->saveDelivery();
 
-        $this->reset(['school_id', 'amount']);
+        $this->reset(['school_id', 'amount_pk', 'amount_pb']);
     }
 
     private function saveDelivery()
@@ -161,17 +184,19 @@ new class extends Component
         if ($this->isOnTrip()) {
             $this->category  = $this->last_log->category->name;
             $this->school_id = $this->last_log->school_id;
-            $this->amount    = $this->last_log->amount;
+            $this->amount_pk    = $this->last_log->amount_pk;
+            $this->amount_pb    = $this->last_log->amount_pb;
         }
 
         $this->validate();
 
-        Delivery::create([
+        SchoolDelivery::create([
             'timestamp'  => $this->timestamp,
             'category'   => $this->category,
             'flow'       => $this->flow,
             'school_id'  => $this->school_id,
-            'amount'     => $this->amount,
+            'amount_pk'     => $this->amount_pk,
+            'amount_pb'     => $this->amount_pb,
             'driver_id'  => $this->driver_id,
             'latitude'   => $this->latitude,
             'longitude'  => $this->longitude,
@@ -272,14 +297,25 @@ new class extends Component
         @enderror
     </div>
 
-    <div class="">
-        <label class="block text-sm font-medium text-gray-600 mb-2">
-            Jumlah Ompreng / Paket
-        </label>
-        <input type="text" wire:model.live="amount"  @disabled($this->isOnTrip()) class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        @error('amount')
-            <p class="font-light text-sm text-red-500">{{ $message }}</p>
-        @enderror
+    <div class="grid grid-cols-2 gap-2 items-center justify-center">
+        <div class="">
+            <label class="block text-sm font-medium text-gray-600 mb-2">
+                Jumlah PK
+            </label>
+            <input type="text" wire:model.live="amount_pk"  @disabled($this->isOnTrip()) class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            @error('amount_pk')
+                <p class="font-light text-sm text-red-500">{{ $message }}</p>
+            @enderror
+        </div>
+        <div class="">
+            <label class="block text-sm font-medium text-gray-600 mb-2">
+                Jumlah PB
+            </label>
+            <input type="text" wire:model.live="amount_pb"  @disabled($this->isOnTrip()) class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            @error('amount_pb')
+                <p class="font-light text-sm text-red-500">{{ $message }}</p>
+            @enderror
+        </div>
     </div>
 
     {{-- LOKASI --}}
@@ -389,7 +425,7 @@ new class extends Component
                                 {{ ucfirst($log['category']->label()) }} - {{ $log->school->school_name }}
                             </p>
                             <p class="font-light text-gray-700 text-sm">
-                                {{ $log->amount }} Ompreng/Paket
+                                PK ({{ $log->amount_pk }}) - PB ({{ $log->amount_pb }})
                             </p>
                             <p class="text-xs text-gray-500">
                                 {{ Carbon::parse($log['timestamp'])->translatedFormat('l, d F Y - H:i') }}

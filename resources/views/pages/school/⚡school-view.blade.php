@@ -5,6 +5,12 @@ use App\Models\School;
 
 new class extends Component
 {
+    public $breadcrumbs = [
+        ['icon' => 's-home', 'link' => route('dashboard')],
+        ['label' => 'Sekolah', 'link' =>],
+        ['label' => 'Sekolah'],
+    ];
+
     public $schools;
 
     public function mount()
@@ -30,7 +36,46 @@ new class extends Component
 };
 ?>
 
-<div class="">
+<div>
+    <x-breadcrumbs :items="$breadcrumbs" class="mb-3" />
+
+    <x-header title="Sekolah" subtitle="Daftar Sekolah terdata" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('school.portion') }}" route="school.portion" label="Histori Porsi" />
+            <x-button link="{{ route('school.create') }}" route="school.create" icon="o-plus" label="Tambah Sekolah" class="btn-primary" />
+        </x-slot:actions>
+    </x-header>
+
+    <div class="grid grid-cols-1 justify-center bg-white p-2 items-center gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <x-stat
+            title="Total Sekolah"
+            description="Terdata"
+            value="{{ count($schools) }}"
+            icon="o-academic-cap"
+            color="text-primary" />
+
+        <x-stat
+            title="Porsi Kecil"
+            description="Dibawah Kelas 4 Sd"
+            value="22.124"
+            icon="s-users"
+            color="text-lime-500"/>
+
+        <x-stat
+            title="Porsi Besar"
+            description="Diatas Kelas 3 Sd"
+            value="34"
+            icon="s-users"
+            color="text-sky-500" />
+
+        <x-stat
+            title="Total Siswa"
+            description="Yolo"
+            value="22.124"
+            icon="o-arrow-trending-down"
+            class="text-orange-500"
+            color="text-pink-500" />
+    </div>
 
     {{-- HEADER --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-4">

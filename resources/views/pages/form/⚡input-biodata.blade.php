@@ -10,6 +10,8 @@ use App\enum\MarriedStatus;
 
 new class extends Component
 {
+    public $breadcrumbs =[];
+
     public $nik;
     public $nomor_kk;
     public $fullname;
@@ -38,6 +40,12 @@ new class extends Component
             $this->fill($biodata->toArray());
             $this->isEdit = true;
         }
+
+        $this->breadcrumbs = [
+            ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'biodata', 'link' => route('biodata')],
+            ['label' => 'Update'],
+        ];
     }
 
     public function save()
@@ -93,16 +101,10 @@ new class extends Component
 };
 ?>
 
-<div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6 space-y-6">
+<div class="">
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-700">
-            {{ $isEdit ? 'Edit Biodata' : 'Input Biodata' }}
-        </h2>
-        <p class="text-sm text-gray-500">
-            Lengkapi data diri Anda dengan benar
-        </p>
-    </div>
+    <x-header title="Edit Biodata" subtitle="Lengkapi data diri anda dengan benar" />
 
     @if (session()->has('success'))
         <div class="bg-green-100 text-green-700 p-3 rounded-md">
@@ -111,30 +113,13 @@ new class extends Component
     @endif
 
     <form wire:submit.prevent="save" class="grid grid-cols-2 gap-4">
-
-        <div>
-            <label>NIK</label>
-            <input type="text" wire:model="nik" class="w-full border rounded-lg p-2">
-            @error('nik') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Nomor KK</label>
-            <input type="text" wire:model="nomor_kk" class="w-full border rounded-lg p-2">
-            @error('nomor_kk') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
+        <x-input label="NIK" wire:model="nik" placeholder="320..." icon="o-credit-card" hint="16 Digit Nomor Induk Kependudukan" />
+        <x-input label="Nomor kk" wire:model="nik" placeholder="320..." icon="o-credit-card" hint="Nomor Kartu Keluarga" />
         <div class="col-span-2">
-            <label>Nama Lengkap</label>
-            <input type="text" wire:model="fullname" class="w-full border rounded-lg p-2">
-            @error('fullname') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            <x-input label="Nama Lengkap" wire:model="fullname" placeholder="..." icon="o-user" hint="Nama lengkap sesuai dengan yang ada pada ktp" />
         </div>
-    
-        <div>
-            <label>Tempat Lahir</label>
-            <input type="text" wire:model="place_of_birth" class="w-full border rounded-lg p-2">
-            @error('place_of_birth') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
+        <x-input label="Tempat Lahir" wire:model="place_of_birth" placeholder="..." icon="o-map-pin" />
+        <x-datetime label="Tanggal Lahir" wire:model="date_of_birth" icon="o-calendar-days" />
     
         <div>
             <label>Tanggal Lahir</label>

@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserInformation::class);
     }
+
+    public function route()
+    {
+        return $this->hasOne(RouteDriver::class, 'driver_id', 'id');
+    }
 }

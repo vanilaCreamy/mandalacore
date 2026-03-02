@@ -29,22 +29,22 @@ Route::middleware(['auth'])->group(function () {
         };
     })->name('dashboard');
 
-    Route::livewire('/admin/dashboard', 'pages::dashboard.admin-dashboard')
+    Route::livewire('/dashboard/admin', 'pages::dashboard.admin-dashboard')
         ->name('dashboard.admin');
 
-    Route::livewire('/head/dashboard', 'pages::dashboard.hk-dashboard')
+    Route::livewire('/dashboard/head', 'pages::dashboard.hk-dashboard')
         ->name('dashboard.head');
 
-    Route::livewire('/plog/dashboard', 'pages::dashboard.plog-dashboard')
+    Route::livewire('/dashboard/plog', 'pages::dashboard.plog-dashboard')
         ->name('dashboard.plog');
 
-    Route::livewire('/plok/dashboard', 'pages::dashboard.plok-dashboard')
+    Route::livewire('/dashboard/plok', 'pages::dashboard.plok-dashboard')
         ->name('dashboard.plok');
 
-    Route::livewire('/aslap/dashboard', 'pages::dashboard.aslap-dashboard')
+    Route::livewire('/dashboard/aslap', 'pages::dashboard.aslap-dashboard')
         ->name('dashboard.aslap');
 
-    Route::livewire('/driver/dashboard', 'pages::dashboard.driver-dashboard')
+    Route::livewire('/dashboard/driver', 'pages::dashboard.driver-dashboard')
         ->name('dashboard.driver');
 });
 
@@ -56,19 +56,22 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('/change-password', 'pages::change-password')->name('change_password');
 
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 Route::middleware(['auth', 'driver_role'])->group(function () {
     Route::livewire('/log_distribution', 'pages::log_distribution')->name('log_distribution');
 });
 
-Route::middleware(['auth', 'admin_role'])->group(function () {
+Route::middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::livewire('/users', 'pages::user.users')->name('user.view');
+    Route::livewire('/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
+});
 
-    Route::livewire('/manage/users', 'pages::user.users')->name('user.view');
-    Route::livewire('/manage/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
+Route::middleware(['auth', 'role:ADMIN,ASLAP'])->group(function () {
 
-    Route::livewire('/manage/schools', 'pages::school.school-view')->name('school.view');
+    Route::livewire('/manage/schools', 'pages::school.school-index')->name('school.index');
+    Route::livewire('/manage/schools/list', 'pages::school.school-view')->name('school.view');
     Route::livewire('/manage/schools/create', 'pages::school.school-create')->name('school.create');
     Route::livewire('/manage/schools/portions', 'pages::school.school-portion-index')->name('school.portion');
     Route::livewire('/manage/schools/portions/log', 'pages::school.log-portion')->name('school.log-portion');
@@ -81,5 +84,13 @@ Route::middleware(['auth', 'admin_role'])->group(function () {
     Route::livewire('/manage/posyandu/portions/log', 'pages::posyandu.log-portion')->name('posyandu.log-portion');
     Route::livewire('/manage/posyandu/{posyandu_id}', 'pages::posyandu.posyandu-detail')->whereNumber('posyandu_id')->name('posyandu.detail');
     Route::livewire('/manage/posyandu/{posyandu_id}/edit', 'pages::posyandu.posyandu-edit')->whereNumber('posyandu_id')->name('posyandu.edit');
-
+    
+    
+    Route::livewire('/manage/distribusi', 'pages::distribution.dist-index')->name('distribution.index');
+    Route::livewire('/manage/distribusi/rute', 'pages::distribution.create-route')->name('distribution.road-route');
+    
+    
+    
+    Route::livewire('/test', 'pages::test')->name('test');
+    
 });

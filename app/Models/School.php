@@ -30,6 +30,7 @@ class School extends Model
         'hm_name',
         'hm_phone_number',
         'hm_email',
+        'route',
     ];
 
     /**

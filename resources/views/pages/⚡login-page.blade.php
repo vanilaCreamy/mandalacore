@@ -33,33 +33,24 @@ new class extends Component
 };
 ?>
 
-<div class="bg-slate-200">
+<div class="">
     <div class="flex flex-col gap-2 w-full h-screen justify-center items-center">
-        <header>
-            <h2 class="text-xl font-semibold text-center">Selamat Datang</h2>
-            <p class="text-sm text-slate-600">Masuk ke web Mandala System</p>
-        </header>
-        <main class="bg-slate-100 p-3 rounded-md flex flex-col gap-4">
+        <x-header title="Selamat Datang" subtitle="Masuk ke web Mandala System" />
+        <main class="bg-slate-50 p-3 rounded-md flex flex-col gap-4">
             <div class="">
                 <h3 class="text-lg font-semibold text-center">Masuk</h3>
             <p class="text-sm text-slate-600 text-center">Masukkan kredensial anda untuk mengakses akun</p>
             </div>
 
-            <form wire:submit.prevent="login" class="flex flex-col gap-2">
-                <div class="">
-                    <input wire:model="email" type="text" class="border rounded-md p-2 block w-full" placeholder="Email">
-                    @error('email')
-                        <p class="text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="">
-                    <input wire:model="password" type="password" class="border rounded-md p-2 block w-full" placeholder="Password">
-                    @error('password')
-                        <p class="text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <button type="submit" class="bg-slate-800 text-slate-100 p-2 rounded-md hover:bg-slate-700 active:bg-slate-60">Masuk</button>
-            </form>
+            <x-form wire:submit.prevent="login" >
+                <x-input label="Email" wire:model="email" type="email" placeholdel="abc@email.com" />
+                <x-password label="Password" wire:model="password" right />
+                <x-slot:actions>
+                    <div class="w-full flex items-center justify-center">
+                        <x-button label="Masuk" type="submit" class="btn-primary w-full" spinner="login" />
+                    </div>
+                </x-slot:actions>
+            </x-form>
             @error('credential')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror

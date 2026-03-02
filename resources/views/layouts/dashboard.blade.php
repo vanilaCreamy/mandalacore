@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="winter" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,132 +9,83 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
+
     </head>
-    <body>
-        <div 
-            x-data="{ open: false }" 
-            class="min-h-screen bg-gray-100 flex text-slate-700"
-        >
+    <body class="font-sans antialiased">
 
-            {{-- Sidebar --}}
-            <aside 
-                :class="open ? 'translate-x-0' : '-translate-x-full'"
-                class="fixed z-30 inset-y-0 left-0 w-44 h-screen bg-white shadow-md transform transition-transform duration-300
-                    md:translate-x-0 md:static md:inset-0"
-            >
-                <div class="p-4 border-b">
-                    <h1 class="text-lg font-bold">Mandala</h1>
+        {{-- The navbar with `sticky` and `full-width` --}}
+        <x-nav sticky full-width>
+    
+            <x-slot:brand>
+                {{-- Drawer toggle for "main-drawer" --}}
+                <label for="main-drawer" class="lg:hidden mr-3">
+                    <x-icon name="o-bars-3" class="cursor-pointer" />
+                </label>
+
+                {{-- Brand --}}
+                <div class="flex gap-2 items-center">
+                    <img src="{{ asset('/images/logo-web.png') }}" alt="" class="w-9 h-9">
+                    <h2>Mandala</h2>
                 </div>
-
-                <nav class="p-4 space-y-6 text-sm h-screen overflow-y-auto">
-
-                    {{-- ================= MENU UTAMA ================= --}}
-                    <div>
-                        <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Menu Utama
-                        </p>
-                
-                        <div class="space-y-1">
-                            <livewire:buttons.nav-btn href="dashboard" scope="dashboard.*" color="gray">Dashboard</livewire:buttons.nav-btn>
-                            <livewire:buttons.nav-btn href="biodata" scope="biodata" color="gray">Biodata</livewire:buttons.nav-btn>
-                        </div>
-                    </div>
-                
-                    {{-- ================= TUGAS ================= --}}
-                    <div>
-                        <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Tugas
-                        </p>
-                
-                        <div class="space-y-1">
-                            @if (Auth::user()->role->name == 'ADMIN')
-                                <livewire:buttons.nav-btn href="user.view" scope="user.*" color="gray">Kelola User</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="school.view" scope="school.*" color="gray">Master Sekolah</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="posyandu.view" scope="posyandu.*" color="gray">Master Posyandu</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="" scope="" color="gray">Master Menu</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="" scope="" color="gray">Master Bahan Baku</livewire:buttons.nav-btn> 
-                                <livewire:buttons.nav-btn href="" scope="" color="gray">Jadwal Distribusi</livewire:buttons.nav-btn> 
-                            @endif
-                            @if (Auth::user()->role->name == 'PLOK')
-                                <livewire:buttons.nav-btn href="" color="gray">Input Data</livewire:buttons.nav-btn>
-                            @endif
-                            @if (Auth::user()->role->name == 'PLOG')
-                                <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                                    Gizi
-                                </a>   
-                            @endif
-                            @if (Auth::user()->role->name == 'DRIVER')
-                                <livewire:buttons.nav-btn href="log_distribution" color="gray">Log Pengantaran</livewire:buttons.nav-btn>
-                            @endif
-                        </div>
-                    </div>
-                
-                    {{-- ================= PENGATURAN ================= --}}
-                    <div>
-                        <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            Pengaturan
-                        </p>
-                
-                        <div class="space-y-1">
-                            <livewire:buttons.nav-btn href="profile" scope="profile" color="gray">Profile</livewire:buttons.nav-btn> 
-                            <livewire:buttons.nav-btn href="change_password" scope="change_password" color="gray">Ubah Password</livewire:buttons.nav-btn> 
-            
-                            <form method="POST" action="">
-                                @csrf
-                                <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                
-                </nav>
-                
-            </aside>
-
-            {{-- Overlay (mobile only) --}}
-            <div 
-                x-show="open"
-                @click="open = false"
-                class="fixed h-screen w-screen inset-0 bg-slate-500 opacity-40 z-20 md:hidden"
-            ></div>
-
-            {{-- Main Content --}}
-            <div class="flex-1 flex flex-col max-h-screen overflow-y-auto">
-
-                {{-- Top Navbar --}}
-                <header class="bg-white shadow-md p-4 flex items-center justify-between">
+            </x-slot:brand>
+    
+            {{-- Right side actions --}}
+            <x-slot:actions>
+                <x-button label="Dashboard" icon="o-envelope" link="/dashboard" class="btn-ghost btn-sm" responsive />
+                <x-button label="Biodata" icon="o-bell" link="/biodata" class="btn-ghost btn-sm" responsive />
+            </x-slot:actions>
+        </x-nav>
+    
+        {{-- The main content with `full-width` --}}
+        <x-main with-nav full-width>
+    
+            {{-- This is a sidebar that works also as a drawer on small screens --}}
+            {{-- Notice the `main-drawer` reference here --}}
+            <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200" right-mobile>
+    
+                {{-- User --}}
+                @if($user = auth()->user())
+                    <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover class="pt-2">
+                        <x-slot:actions>
+                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" />
+                        </x-slot:actions>
+                    </x-list-item>
+    
+                    <x-menu-separator />
+                @endif
+    
+                {{-- Activates the menu item when a route matches the `link` property --}}
+                <x-menu activate-by-route>
+                    <x-menu-item title="Dashboard" icon="o-home" link="/dashboard" />
+                    <x-menu-item title="Biodata" icon="o-document-text" link="/biodata" />   
                     
-                    {{-- Menu Button (Mobile) --}}
-                    <button 
-                        @click="open = true"
-                        class="md:hidden text-gray-600"
-                    >
-                        ☰
-                    </button>
+                    <x-menu-separator />
+                    
+                    @if (Auth::user()->role->name == 'ADMIN')
+                        <x-menu-item title="Kelola User" icon="o-users" link="{{ route('user.view') }}" route="user.view" />   
+                    @endif
 
-                    <h2 class="font-semibold">Welcome {{ Auth::user()['name'] }}</h2>
+                    @if (Auth::user()->role->name == 'ASLAP')
+                        <x-menu-item title="Manajemen Sekolah" icon="o-document-text" link="{{ route('school.index') }}" route="school.index" />   
+                    @endif
 
-                    <div class="invisible md:visible">
-                        {{-- Profile / Logout --}}
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit"
-                                class="text-sm bg-red-500 text-white px-3 py-1 rounded">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
-                </header>
+                    <x-menu-separator />
 
-                {{-- Content Area --}}
-                <main class="p-6 flex-1 bg-slate-200">
-                    {{ $slot }}
-                </main>
-
-            </div>
-        </div>
-
+                    <x-menu-sub title="Profile" icon="o-user-circle">
+                        <x-menu-item title="Pengaturan Akun" icon="o-adjustments-horizontal" link="####" />
+                        <x-menu-item title="Ubah Password" icon="o-key" link="####" />
+                    </x-menu-sub>
+                </x-menu>
+            </x-slot:sidebar>
+    
+            {{-- The `$slot` goes here --}}
+            <x-slot:content>
+                {{ $slot }}
+            </x-slot:content>
+        </x-main>
+    
+        {{--  TOAST area --}}
+        <x-toast />
         @livewireScripts
     </body>
 </html>

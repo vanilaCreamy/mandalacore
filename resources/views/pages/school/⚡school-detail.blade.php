@@ -2,10 +2,12 @@
 
 use Livewire\Component;
 use App\Models\School;
+use App\Models\SchoolPortion;
 
 new class extends Component
 {
     public $school;
+    public $school_portions;
 
     public function mount($school_id)
     {
@@ -14,6 +16,8 @@ new class extends Component
             ->withSum('portions', 'teacher_portions')
             ->withSum('portions', 'non_teacher_portions')
             ->find($school_id);
+
+        $this->school_portions = SchoolPortion::where('school_id', $school_id)->latest()->get();
     }
 };
 ?>
@@ -50,8 +54,8 @@ new class extends Component
         $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
         $tambahan = $teacher + $nonTeacher;
 
-        $small = $school->portions_sum_small_portions;
-        $big = $school->portions_sum_big_portions;
+        $small = $school->portions_sum_small_portions ?? 0;
+        $big = $school->portions_sum_big_portions ?? 0;
 
         if ($big != 0) {
             $bigFinal = $big + $tambahan;
@@ -194,6 +198,96 @@ new class extends Component
                 * Porsi Guru: {{ $teacher }} |
                 Porsi Non-Guru: {{ $nonTeacher }}
             </div>
+        </div>
+
+        {{-- History --}}
+        <div class="">
+            <h2 class="text-lg font-semibold mb-4 border-b pb-2">
+                Histori Perubahan Porsi
+            </h2>
+
+            {{-- Log Porsi --}}
+            <ul class="space-y-3">
+                @foreach ($school_portions as $item)
+                    <li class="bg-white p-4 rounded-lg shadow-sm">
+
+                        {{-- Header --}}
+                        <div class="mb-3">
+                            <h5 class="text-xs text-slate-500">
+                                {{ $item->created_at->format('D, d M Y H:i') }}
+                            </h5>
+                        </div>
+
+                        {{-- Portion Grid --}}
+                        <div class="grid grid-cols-4 gap-4 text-sm">
+
+                            @foreach ([
+                                'Kecil' => $item->small_portions,
+                                'Besar' => $item->big_portions,
+                                'Guru' => $item->teacher_portions,
+                                'Non Guru' => $item->non_teacher_portions
+                            ] as $label => $port)
+
+                                <div class="flex items-center gap-2">
+
+                                    {{-- POSITIF --}}
+                                    @if ($port > 0)
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-4 h-4 text-green-500">
+                                            <path stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                        </svg>
+
+                                    {{-- NOL --}}
+                                    @elseif ($port == 0)
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-4 h-4 text-slate-400">
+                                            <path stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M5 12h14" />
+                                        </svg>
+
+                                    {{-- NEGATIF --}}
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-4 h-4 text-red-500">
+                                            <path stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="m4.5 4.5 15 15m0 0V8.25m0 11.25H8.25" />
+                                        </svg>
+                                    @endif
+
+                                    <div>
+                                        <span class="font-medium">{{ $label }}:</span>
+                                        <span class="
+                                            {{ $port > 0 ? 'text-green-600' : ($port < 0 ? 'text-red-600' : 'text-slate-600') }}
+                                        ">
+                                            {{ $port > 0 ? '+' . $port : $port }}
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+
         </div>
 
     </div>

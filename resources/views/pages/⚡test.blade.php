@@ -9,5 +9,9 @@ new class extends Component
 ?>
 
 <div>
-    {{-- The whole future lies in uncertainty: live immediately. - Seneca --}}
+    <x-header title="Test Page" />
+
+    <x-icon name="o-document-text" />
+
+    
 </div>

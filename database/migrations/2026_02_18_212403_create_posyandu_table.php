@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('cadre_name');
             $table->string('cadre_phone_number')->nullable();
             $table->string('cadre_email')->nullable();
+            $table->unsignedTinyInteger('route')->nullable(true);
             $table->timestamps();
             $table->softDeletes();
         });

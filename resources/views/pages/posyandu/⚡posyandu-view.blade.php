@@ -30,29 +30,18 @@ new class extends Component
 ?>
 
 <div class="">
+    {{-- <x-header title="Default size" subtitle="With subtitle and separator" separator /> --}}
 
-    {{-- HEADER --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Daftar Posyandu
-            </h1>
-            <p class="text-sm text-slate-500">
-                Data posyandu terdaftar
-            </p>
-        </div>
+    {{-- Header --}}
+    <livewire:partials.section class="flex items-center justify-between">
+        <livewire:headings.head title="Daftar Posyandu" subtitle="Data posyandu terdaftar" />
 
         <div class="flex gap-2 items-center">
-            <a href="{{ route('posyandu.create') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
-                + Tambah Posyandu
-            </a>
+            <livewire:links.link url="posyandu.create" variant="primary" color="teal">+ Tambah Posyandu</livewire:links.link>
+            <livewire:links.link url="posyandu.portion" variant="primary" color="blue">Histori Porsi</livewire:links.link>
             <a href="{{ route('posyandu.portion') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
-                + Histori Porsi
-            </a>
         </div>
-    </div>
+    </livewire:partials.section>
 
 
     {{-- TABLE (Desktop) --}}
@@ -86,15 +75,15 @@ new class extends Component
                         </td>
 
                         <td class="px-4 py-3">
-                            {{ $posyandu->portions_sum_bumil_portions }}
+                            {{ $posyandu->portions_sum_bumil ?? 0 }}
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            {{ $posyandu->portions_sum_busui_portions }}
+                            {{ $posyandu->portions_sum_busui ?? 0 }}
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            {{ $posyandu->portions_sum_balita_portions }}
+                            {{ $posyandu->portions_sum_balita ?? 0 }}
                         </td>
 
                         <td class="px-4 py-3">
@@ -154,26 +143,22 @@ new class extends Component
                             {{ $posyandu->posyandu_code }}
                         </p>
                     </div>
-
-                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                        {{ $posyandu->posyandu_level->label() }}
-                    </span>
                 </div>
 
                 <div class="grid grid-cols-2 text-sm gap-2 pt-2">
                     <div>
                         <span class="text-slate-500 text-xs">BUMIL</span>
-                        <div class="font-medium">{{ $posyandu->portions_sum_bumil_portions }}</div>
+                        <div class="font-medium">{{ $posyandu->portions_sum_bumil_portions ?? 0}}</div>
                     </div>
 
                     <div>
                         <span class="text-slate-500 text-xs">BUSUI</span>
-                        <div class="font-medium">{{ $posyandu->portions_sum_busui_portions }}</div>
+                        <div class="font-medium">{{ $posyandu->portions_sum_busui_portions ?? 0}}</div>
                     </div>
 
                     <div>
                         <span class="text-slate-500 text-xs">BALITA</span>
-                        <div class="font-medium">{{ $posyandu->portions_sum_balita_portions }}</div>
+                        <div class="font-medium">{{ $posyandu->portions_sum_balita_portions ?? 0}}</div>
                     </div>
                 </div>
 
