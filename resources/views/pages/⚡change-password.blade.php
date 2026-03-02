@@ -25,10 +25,9 @@ new class extends Component
             $this->addError('current_password', 'Password lama tidak sesuai.');
             return;
         }
-
-        $user->update([
-            'password' => Hash::make($this->new_password),
-        ]);
+    
+        $user->password = Hash::make($this->new_password);
+        $user->save();
 
         $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
 
@@ -40,10 +39,8 @@ new class extends Component
 <div class="max-w-xl space-y-6">
 
     {{-- Header --}}
-    <div>
-        <h2 class="text-2xl font-bold text-slate-800">Ubah Password</h2>
-        <p class="text-sm text-slate-500">Pastikan password baru Anda aman dan mudah diingat.</p>
-    </div>
+    <x-header title="Ubah Password" subtitle="Pastikan password baru Anda aman dan mudah diingat." separator />
+    
 
     {{-- Card --}}
     <div class="bg-white shadow rounded-2xl p-6">
@@ -55,53 +52,16 @@ new class extends Component
             </div>
         @endif
 
-        <form wire:submit.prevent="updatePassword" class="space-y-5">
-
-            {{-- Password Lama --}}
-            <div>
-                <label class="block text-sm font-semibold text-slate-600 mb-1">
-                    Password Lama
-                </label>
-                <input type="password"
-                       wire:model.defer="current_password"
-                       class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                @error('current_password')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Password Baru --}}
-            <div>
-                <label class="block text-sm font-semibold text-slate-600 mb-1">
-                    Password Baru
-                </label>
-                <input type="password"
-                       wire:model.defer="new_password"
-                       class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                @error('new_password')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Konfirmasi Password Baru --}}
-            <div>
-                <label class="block text-sm font-semibold text-slate-600 mb-1">
-                    Konfirmasi Password Baru
-                </label>
-                <input type="password"
-                       wire:model.defer="new_password_confirmation"
-                       class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            {{-- Button --}}
-            <div class="pt-2">
-                <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
-                    Simpan Perubahan
-                </button>
-            </div>
-
-        </form>
+        <x-form wire:submit.prevent="updatePassword">
+            <x-password label="Password Lama" wire:model="current_password" right />
+            <x-password label="Password Baru" wire:model="new_password" right />
+            <x-password label="Konfirmasi Password Baru" wire:model="new_password_confirmation" />
+            <x-slot:actions>
+                <div class="w-full flex items-center justify-center">
+                    <x-button label="Masuk" type="submit" class="btn-primary w-full" spinner="updatePassword" />
+                </div>
+            </x-slot:actions>
+        </x-form>
     </div>
 
 </div>

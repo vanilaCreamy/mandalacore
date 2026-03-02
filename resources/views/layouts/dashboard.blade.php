@@ -72,8 +72,8 @@
                     <x-menu-separator />
 
                     <x-menu-sub title="Profile" icon="o-user-circle">
-                        <x-menu-item title="Pengaturan Akun" icon="o-adjustments-horizontal" link="####" />
-                        <x-menu-item title="Ubah Password" icon="o-key" link="####" />
+                        <x-menu-item title="Pengaturan Akun" icon="o-adjustments-horizontal" link="{{ route('profile') }}" route="profile" />
+                        <x-menu-item title="Ubah Password" icon="o-key" link="{{ route('change_password') }}" route="change_password" />
                     </x-menu-sub>
                 </x-menu>
             </x-slot:sidebar>
