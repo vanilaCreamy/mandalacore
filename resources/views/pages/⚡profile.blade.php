@@ -55,10 +55,7 @@ new class extends Component
 <div class="space-y-8 max-w-3xl">
 
     {{-- Header --}}
-    <div>
-        <h2 class="text-2xl font-bold text-slate-800">Profil Saya</h2>
-        <p class="text-sm text-slate-500">Kelola informasi akun dan foto profil Anda</p>
-    </div>
+    <x-header title="Profil Saya" subtitle="Kelola informasi akun dan foto profil Anda" separator />
 
     {{-- Card --}}
     <div class="bg-white shadow rounded-2xl p-6 space-y-6">
