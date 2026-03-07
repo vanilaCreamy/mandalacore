@@ -73,7 +73,7 @@
 
                     @if (Auth::user()->role->name == 'ASLAP')
                         <x-menu-item title="Manajemen Sekolah" icon="o-academic-cap" link="{{ route('school.index') }}" route="school.index" />   
-                        <x-menu-item title="Manajemen Posyandu" icon="o-squares-plus" badge="Lock" badge-classes="badge-soft badge-error" />   
+                        <x-menu-item title="Manajemen Sekolah" icon="o-squares-plus" link="{{ route('posyandu.index') }}" route="posyandu.index" />   
                     @endif
 
                     <x-menu-separator />

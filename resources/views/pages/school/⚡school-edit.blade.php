@@ -6,6 +6,8 @@ use App\enum\SchoolLevel;
 
 new class extends Component
 {
+    public $breadcrumbs = [];
+
     public $school;
 
     public $school_code;
@@ -36,6 +38,14 @@ new class extends Component
         $this->hm_name = $this->school->hm_name;
         $this->hm_phone_number = $this->school->hm_phone_number;
         $this->hm_email = $this->school->hm_email;
+
+
+        $this->breadcrumbs = [
+            ['icon' => 's-home', 'link' => route('dashboard')],
+            ['label' => 'Sekolah', 'link' => route('school.index')],
+            ['label' => $this->school->school_name, 'link' => route('school.view', $this->school->id)],
+            ['label' => 'Perbarui'],
+        ];
     }
 
     protected function rules()
@@ -55,6 +65,14 @@ new class extends Component
             'hm_phone_number' => 'nullable|string|max:20',
             'hm_email' => 'nullable|email',
         ];
+    }
+
+    public function getLevelOptionsProperty()
+    {
+        return collect(SchoolLevel::cases())->map(fn ($level) => [
+            'value' => $level->name,
+            'label' => $level->label(),
+        ]);
     }
 
         public function save()
@@ -81,24 +99,48 @@ new class extends Component
 };
 ?>
 
-<div class="space-y-6">
+<div>
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    {{-- HEADER --}}
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Tambah Sekolah Baru
-            </h1>
-            <p class="text-sm text-slate-500">
-                Input data sekolah
-            </p>
+    <x-header title="Tambah Sekolah Baru" subtitle="Input data sekolah" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('school.view', $this->school->id) }}" route="school.view" icon="o-arrow-left" label="Kembali" class="btn-dash" />
+            <x-button link="{{ route('school.index') }}" route="school.index" label="Daftar Sekolah" />
+        </x-slot:actions>
+    </x-header>
+
+    <x-form wire:submit.prevent="save">
+        
+        {{-- INFORMASI SEKOLAH --}}
+        <h2 class="font-semibold border-b pb-2">Informasi Sekolah</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <x-input label="Kode Sekolah" wire:model="school_code" />
+            <x-input label="Nama Sekolah" wire:model="school_name" />
+            <span class="md:col-span-2">
+                <x-textarea label="Alamat" wire:model="address" rows="4" />
+            </span>
+            <x-select label="Tingkatan" wire:model="school_level" :options="$this->levelOptions" option-value="value" option-label="label" placeholder="Semua Tingkatan" />
         </div>
-
-        <a href="{{ route('school.view') }}"
-           class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm">
-            ← Kembali
-        </a>
-    </div>
+        
+        {{-- INFORMASI PIC --}}
+        <h2 class="font-semibold border-b pb-2">Informasi PIC</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <x-input label="Nama PIC" wire:model="pic_name" />
+            <x-input label="Jabatan PIC" wire:model="pic_position" />
+            <x-input label="No HP PIC" wire:model="pic_phone_number" />
+            <x-input label="Email PIC" wire:model="pic_email" />
+        </div>
+        
+        {{-- INFORMASI KEPALA SEKOLAH --}}
+        <h2 class="font-semibold border-b pb-2">Informasi Kepala Sekolah (Head Master)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <x-input label="Nama Kepala Sekolah" wire:model="hm_name" />
+        </div>
+        
+        <x-slot:actions>
+            <x-button label="Simpan Perubahan" class="btn-primary" type="submit" spinner="save" />
+        </x-slot:actions>
+    </x-form>
 
 
     <form wire:submit.prevent="save" class="space-y-8">

@@ -21,17 +21,18 @@ new class extends Component
 
     public function mount()
     {
+        $this->schools = School::withSum('portions', 'small_portions')
+        ->withSum('portions', 'big_portions')
+        ->withSum('portions', 'teacher_portions')
+        ->withSum('portions', 'non_teacher_portions')
+        ->get();
+        
+        $this->school_portions = SchoolPortion::all();
+        
         $this->breadcrumbs = [
             ['icon' => 's-home', 'link' => route('dashboard')],
             ['label' => 'Sekolah'],
         ];
-
-        $this->schools = School::withSum('portions', 'small_portions')
-            ->withSum('portions', 'big_portions')
-            ->withSum('portions', 'teacher_portions')
-            ->withSum('portions', 'non_teacher_portions')
-            ->get();
-        $this->school_portions = SchoolPortion::all();
     }
 
     public function getSchoolsProperty()
@@ -229,12 +230,12 @@ new class extends Component
 
             {{-- Filter Level --}}
             <x-select
-                label="Filter Level"
+                label="Filter Tingkatan"
                 wire:model.live="level"
                 :options="$this->levelOptions"
                 option-value="value"
                 option-label="label"
-                placeholder="Semua Level"
+                placeholder="Semua Tingkatan"
             />
 
         </div>
@@ -361,7 +362,7 @@ new class extends Component
                     <x-menu-item 
                         title="Detail"
                         icon="o-eye"
-                        link="{{ route('school.detail', ['school_id' => $school->id]) }}"
+                        link="{{ route('school.view', ['school_id' => $school->id]) }}"
                     />
 
                     <x-menu-item 
