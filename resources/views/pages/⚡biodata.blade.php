@@ -45,7 +45,7 @@ new class extends Component
     <div class="">
         <div class="w-full relative overflow-hidden h-56 flex justify-center items-center text-2xl bg-gray-200 font-medium text-gray-400">
             <img src="{{ asset('images/bg_v2.webp') }}" alt="banner" height="150" class="block w-full h-full object-cover">
-            <p class="absolute top-0 right-0 px-2 opacity-35 z-50 text-xs text-slate-700">{{ $this->user_information->updated_at }} {{ $user->updated_at }}</p>
+            <p class="absolute top-0 right-0 px-2 opacity-35 text-xs text-slate-700">{{ $this->user_information->updated_at }} {{ $user->updated_at }}</p>
         </div>
         <div class="flex items-center gap-6 px-6">
             {{-- <img src="{{ asset('images/avatars.png') }}" alt="LOGO" height="150" width="150" class="bg-gray-200 rounded-md -translate-y-8"> --}}

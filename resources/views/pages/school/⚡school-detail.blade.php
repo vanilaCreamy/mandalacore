@@ -6,6 +6,8 @@ use App\Models\SchoolPortion;
 
 new class extends Component
 {
+    public $breadcrumbs = [];
+
     public $school;
     public $school_portions;
 
@@ -18,35 +20,26 @@ new class extends Component
             ->find($school_id);
 
         $this->school_portions = SchoolPortion::where('school_id', $school_id)->latest()->get();
+
+        $this->breadcrumbs = [
+            ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'Sekolah', 'link' => route('school.index')],
+            ['label' => $this->school->school_name,],
+        ];
     }
 };
 ?>
 
 <div class="space-y-6">
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    {{-- HEADER --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Detail Sekolah
-            </h1>
-            <p class="text-sm text-slate-500">
-                Informasi lengkap sekolah
-            </p>
-        </div>
-
-        <div class="flex gap-3">
-            <a href="{{ route('school.view') }}"
-               class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm">
-                ← Kembali
-            </a>
-
-            <a href="{{ route('school.edit', ['school_id' => $school->id]) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
-                Edit Sekolah
-            </a>
-        </div>
-    </div>
+    <x-header title="Detail Sekolah" subtitle="Informasi lengkap sekolah" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('school.index') }}" route="school.index" icon="o-arrow-left" label="Kembali" class="btn-dash" />
+            <x-button link="{{ route('school.portion') }}" route="school.portion" label="Histori Porsi" />
+            <x-button link="{{ route('school.edit', $this->school->id) }}" route="school.edit" icon="o-pencil" label="Edit Sekolah" class="btn-primary" />
+        </x-slot:actions>
+    </x-header>
 
 
     @php

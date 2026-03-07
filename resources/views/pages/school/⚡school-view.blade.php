@@ -102,6 +102,11 @@ new class extends Component
 
 
     {{-- TABLE (Desktop) --}}
+    <x-card title="Your stats" subtitle="Our findings about you" shadow separator>
+        sdfdf
+    </x-card>
+
+
     <div class="hidden md:block bg-white shadow rounded-xl overflow-hidden">
 
         <table class="min-w-full text-sm">

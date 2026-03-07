@@ -2,12 +2,20 @@
 
 use Livewire\Component;
 use App\Models\User;
-use Livewire\Attributes\On; 
+use App\Models\UserInformation;
+use Livewire\Attributes\On;
+use App\enum\UserRole; 
+use Illuminate\Validation\Rule;
 
 
 new class extends Component
 {
+    public $user_modal = false;
     public $breadcrumbs = [];
+
+    public $user_name;
+    public $user_email;
+    public $user_role;
 
     public $relawans;
 
@@ -19,6 +27,48 @@ new class extends Component
         ];
 
         $this->loadRelawan();
+    }
+
+    public function getUserRoleOptionsProperty()
+    {
+        return collect(UserRole::cases())->map(fn ($role) => [
+            'id' => $role->name,
+            'name' => $role->label(),
+        ])->toArray();
+    }
+
+    public function rules()
+    {
+        return [
+            'user_name' => ['required', 'string'],
+            'user_email' => ['required', 'email'],
+            'user_role' => ['required', Rule::enum(UserRole::class)],
+        ];
+    }
+    
+    public function save()
+    {
+        $this->validate();
+
+        $new_user = User::create([
+            'name' => $this->user_name,
+            'email' => $this->user_email,
+            'password' => Hash::make('password'),
+            'role' => $this->user_role,
+        ]);
+
+        UserInformation::create([
+            'user_id' => $new_user->id
+        ]);
+
+        // ✅ Reset field
+        $this->reset(['user_name', 'user_email', 'user_role']);
+
+        // ✅ Tutup modal
+        $this->user_modal = false;
+
+        // ✅ Dispatch event
+        $this->dispatch('user-created');
     }
 
     #[On('user-created')] 
@@ -39,11 +89,32 @@ new class extends Component
 ?>
 
 <div>
+    <x-modal wire:model="user_modal" title="Buat Akun Baru" class="backdrop-blur">
+        <x-form wire:submit.prevent="save">
+            <x-input type="text" label="Nama" wire:model="user_name" />
+            <x-input type="email" label="Email" wire:model="user_email" />
+            <x-select label="Role" wire:model="user_role" :options="$this->userRoleOptions" />
+            
+            <x-slot:actions>
+                <x-button label="Tambah" type="submit" class="btn-primary" spinner="save" />
+                <x-button label="Cancel" @click="$wire.user_modal = false" />
+            </x-slot:actions>
+        </x-form>
+    </x-modal>
 
     <x-breadcrumbs :items="$breadcrumbs" />
 
     <!-- Header -->
     <x-header title="Manajemen Akun" separator />
+
+    <div class="flex items-center justify-between">
+        <div class="">
+            <x-stat title="Jumlah Akun" value="{{ count($relawans) }}" icon="o-users" color="text-primary" />
+        </div>
+        <div class="">
+            <x-button label="+ Tambah Pengguna" @click="$wire.user_modal = true" class="btn-primary" />
+        </div>
+    </div>
 
     @foreach($relawans as $user)
         <x-list-item :item="$user" :link="route('user.detail', $user->id)">

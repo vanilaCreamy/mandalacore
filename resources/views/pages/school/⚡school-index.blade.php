@@ -3,13 +3,16 @@
 use Livewire\Component;
 use App\Models\School;
 use App\Models\SchoolPortion;
+use App\enum\SchoolLevel;
 
 new class extends Component
 {
-    public $breadcrumbs = [];
+    public $school_portion_modal = false;
+    public $selected_school;
 
-    public $schools;
-    public $school_portions;
+    public $breadcrumbs = [];
+    public $search = '';
+    public $level = '';
 
     // table
     public $headers = [
@@ -23,241 +26,378 @@ new class extends Component
             ['label' => 'Sekolah'],
         ];
 
-        $this->schools = School::all();
+        $this->schools = School::withSum('portions', 'small_portions')
+            ->withSum('portions', 'big_portions')
+            ->withSum('portions', 'teacher_portions')
+            ->withSum('portions', 'non_teacher_portions')
+            ->get();
         $this->school_portions = SchoolPortion::all();
     }
 
-    public function refreshChart()
+    public function getSchoolsProperty()
     {
-        $this->mount();
+        return School::query()
+            ->when($this->search, function ($query) {
+                $query->where('school_name', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->level, function ($query) {
+                $query->where('school_level', $this->level);
+            })
+            ->withSum('portions', 'small_portions')
+            ->withSum('portions', 'big_portions')
+            ->withSum('portions', 'teacher_portions')
+            ->withSum('portions', 'non_teacher_portions')
+            ->get();
+    }
+
+    public function getLevelOptionsProperty()
+    {
+        return collect(SchoolLevel::cases())->map(fn ($level) => [
+            'value' => $level->name,
+            'label' => $level->label(),
+        ]);
+    }
+
+    public function getSchoolPortionsProperty()
+    {
+        return SchoolPortion::query()
+            ->when($this->search, function ($query) {
+                $query->whereHas('school', function ($q) {
+                    $q->where('school_name', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->level, function ($query) {
+                $query->whereHas('school', function ($q) {
+                    $q->where('school_level', $this->level);
+                });
+            })
+            ->get();
+    }
+
+    public function openModal($id)
+    {
+        $this->school_portion_modal = true;
+        $this->selected_school = School::withSum('portions', 'small_portions')
+            ->withSum('portions', 'big_portions')
+            ->withSum('portions', 'teacher_portions')
+            ->withSum('portions', 'non_teacher_portions')
+            ->find($id);
     }
 };
 ?>
 
 <div>
-    <x-breadcrumbs :items="$breadcrumbs" class="mb-3" />
+    {{-- MODAL --}}
+    <x-modal wire:model="school_portion_modal" title="Update Porsi" subtitle="{{ $selected_school?->school_name ?? 'Tidak ada sekolah' }}">
+        <x-form no-separator>
 
-    <x-header title="Sekolah" subtitle="Daftar Sekolah terdata" separator>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+
+                {{-- Porsi Kecil --}}
+                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">
+                        Porsi Kecil
+                    </div>
+
+                    <x-input 
+                        type="number"
+                        wire:model="small_portions"
+                        icon="o-chevron-up-down"
+                        placeholder="0"
+                    />
+
+                    <div class="text-xs text-slate-500">
+                        Saat ini:
+                        <span class="font-semibold text-primary">
+                            {{ $selected_school?->portions_sum_small_portions ?? 0 }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Porsi Besar --}}
+                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">
+                        Porsi Besar
+                    </div>
+
+                    <x-input 
+                        type="number"
+                        wire:model="big_portions"
+                        icon="o-chevron-up-down"
+                        placeholder="0"
+                    />
+
+                    <div class="text-xs text-slate-500">
+                        Saat ini:
+                        <span class="font-semibold text-secondary">
+                            {{ $selected_school?->portions_sum_big_portions ?? 0 }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Porsi Guru --}}
+                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">
+                        Porsi Guru
+                    </div>
+
+                    <x-input 
+                        type="number"
+                        wire:model="teacher_portions"
+                        icon="o-chevron-up-down"
+                        placeholder="0"
+                    />
+
+                    <div class="text-xs text-slate-500">
+                        Saat ini:
+                        <span class="font-semibold">
+                            {{ $selected_school?->portions_sum_teacher_portions ?? 0 }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Porsi Non Guru --}}
+                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">
+                        Porsi Non Guru
+                    </div>
+
+                    <x-input 
+                        type="number"
+                        wire:model="non_teacher_portions"
+                        icon="o-chevron-up-down"
+                        placeholder="0"
+                    />
+
+                    <div class="text-xs text-slate-500">
+                        Saat ini:
+                        <span class="font-semibold">
+                            {{ $selected_school?->portions_sum_non_teacher_portions ?? 0 }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <x-slot:actions>
+                <div class="flex justify-between w-full">
+
+                    <x-button 
+                        label="Cancel" 
+                        class="btn-ghost"
+                        @click="$wire.school_portion_modal = false" 
+                    />
+
+                    <x-button 
+                        label="Simpan Perubahan" 
+                        class="btn-primary"
+                        wire:click="updatePortions"
+                        spinner
+                    />
+
+                </div>
+            </x-slot:actions>
+
+        </x-form>
+
+    </x-modal>
+
+    <x-breadcrumbs :items="$breadcrumbs" />
+
+    <x-header title="Sekolah" subtitle="Daftar sekolah penerima manfaat" separator>
         <x-slot:actions>
-            <x-button link="{{ route('school.view') }}" route="school.view" label="Daftar Sekolah" />
             <x-button link="{{ route('school.portion') }}" route="school.portion" label="Histori Porsi" />
             <x-button link="{{ route('school.create') }}" route="school.create" icon="o-plus" label="Tambah Sekolah" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
-    <div class="grid grid-cols-1 justify-center bg-white p-2 items-center gap-2 md:grid-cols-2 lg:grid-cols-4">
-        <x-stat
-            title="Total Sekolah"
-            description="Terdata"
-            value="{{ count($schools) }}"
-            icon="o-academic-cap"
-            color="text-primary" />
+    {{-- Filter & Search Section --}}
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6">
 
-        <x-stat
-            title="Porsi Kecil"
-            description="Dibawah Kelas 4 Sd"
-            value="{{ $school_portions->sum('small_portions') }}"
-            icon="s-users"
-            color="text-lime-500"/>
+        <div class="grid md:grid-cols-4 gap-4 items-start">
 
-        <x-stat
-            title="Porsi Besar"
-            description="Diatas Kelas 3 Sd"
-            value="{{ $school_portions->sum('big_portions') }}"
-            icon="s-users"
-            color="text-sky-500" />
+            {{-- Search --}}
+            <span class="col-span-3">
+                <x-input label="Cari Sekolah" icon="o-magnifying-glass" placeholder="Ketik nama sekolah..." wire:model="search" hint="{{ str(count($this->schools)) . ' sekolah ditemukan' }}" clearable>
+                    <x-slot:append>
+                        {{-- Add `join-item` to all appended elements --}}
+                        <x-button icon="o-magnifying-glass" class="join-item btn-primary" wire:click="getSchoolPortionsProperty" />
+                    </x-slot:append>
+                </x-input>
+                
+            </span>
 
-        <x-stat
-            title="Total Siswa"
-            description="Jumlah Keseluruhan"
-            value="{{ $school_portions->sum('small_portions') + $school_portions->sum('big_portions') }}"
-            icon="o-bolt"
-            color="text-yellow-500" />
+            {{-- Filter Level --}}
+            <x-select
+                label="Filter Level"
+                wire:model.live="level"
+                :options="$this->levelOptions"
+                option-value="value"
+                option-label="label"
+                placeholder="Semua Level"
+            />
+
+        </div>
+
     </div>
 
     {{-- TABLE (Desktop) --}}
-    <div class="hidden md:block bg-white shadow rounded-xl overflow-hidden">
+    
+    <div class="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-2">
 
-        <table class="min-w-full text-sm">
-            <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-3 text-left">Kode</th>
-                    <th class="px-4 py-3 text-left">Nama Sekolah</th>
-                    <th class="px-4 py-3 text-left">Level</th>
-                    <th class="px-4 py-3 text-center">PK</th>
-                    <th class="px-4 py-3 text-center">PB</th>
-                    <th class="px-4 py-3 text-left">PIC</th>
-                    <th class="px-4 py-3 text-center">Action</th>
-                </tr>
-            </thead>
-
-            <tbody class="divide-y">
-
-                @forelse ($schools as $school)
-
-                @php
-                    $teacher = $school->portions_sum_teacher_portions ?? 0;
-                    $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
-                    $tambahan = $teacher + $nonTeacher;
-
-                    $small = $school->portions_sum_small_portions;
-                    $big = $school->portions_sum_big_portions;
-
-                    if ($big != 0) {
-                        $bigFinal = $big + $tambahan;
-                        $smallFinal = $small;
-                    } else {
-                        $smallFinal = $small + $tambahan;
-                        $bigFinal = $big;
-                    }
-                @endphp
-
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="px-4 py-3 font-medium text-nowrap">
+        @forelse ($this->schools as $school)
+        
+        @php
+            $teacher = $school->portions_sum_teacher_portions ?? 0;
+            $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
+            $tambahan = $teacher + $nonTeacher;
+        
+            $small = $school->portions_sum_small_portions ?? 0;
+            $big = $school->portions_sum_big_portions ?? 0;
+        
+            if ($big != 0) {
+                $bigFinal = $big + $tambahan;
+                $smallFinal = $small;
+            } else {
+                $smallFinal = $small + $tambahan;
+                $bigFinal = $big;
+            }
+        @endphp
+        
+        <x-list-item :item="$school"
+            class="bg-slate-100 rounded-2xl border border-slate-100 hover:shadow-md transition-all duration-200 p-4">
+        
+            {{-- LEVEL BADGE --}}
+            {{-- <x-slot:avatar>
+                <div class="flex items-center justify-center w-16">
+                    <x-badge 
+                        value="{{ $school->school_level->label() }}" 
+                        class="badge-primary badge-soft text-xs px-3 py-2" 
+                    />
+                </div>
+            </x-slot:avatar> --}}
+        
+            {{-- MAIN INFO --}}
+            <x-slot:value>
+                <div class="space-y-1">
+        
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-400 font-medium">
                             {{ $school->school_code }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            {{ $school->school_name }}
-                            <p class="text-xs font-light">{{ $school->address }}</p>
-                        </td>
-
-                        <td class="px-4 py-3">
+                        </span>
+        
+                        <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+        
+                        <span class="text-xs text-white bg-blue-500 rounded-xl p-1">
                             {{ $school->school_level->label() }}
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-                            {{ $smallFinal ?? 0 }}
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-                            {{ $bigFinal ?? 0 }}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            <div class="font-medium text-nowrap">
-                                {{ $school->pic_name }}
-                            </div>
-                            <div class="text-xs text-slate-500">
-                                {{ $school->pic_phone_number }}
-                            </div>
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex justify-center gap-2">
-                                <x-button icon="o-eye" class="btn-circle" link="{{ route('school.detail', ['school_id' => $school->id]) }}" />    
-                                <x-button icon="o-eye" class="btn-circle" />    
-                                {{-- <a href="{{ route('school.detail', ['school_id' => $school->id]) }}" class="text-blue-600 hover:underline text-xs">
-                                </a>
-                                <a href="{{ route('school.edit', ['school_id' => $school->id]) }}" class="text-yellow-600 hover:underline text-xs">
-                                    <X-icon name="o-eye"     />    
-                                </a> --}}
-                                <button 
-                                    wire:click="delete_school({{ $school->id }})"
-                                    wire:confirm="Yakin mau hapus sekolah ini?"
-                                    class="text-red-600 hover:underline text-xs"
-                                >
-                                    Hapus
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                @empty
-
-                    <tr>
-                        <td colspan="7" class="text-center py-6 text-slate-400">
-                            Belum ada data sekolah
-                        </td>
-                    </tr>
-
-                @endforelse
-
-            </tbody>
-        </table>
-    </div>
-
-
-
-    {{-- CARD (Mobile) --}}
-    <div class="md:hidden space-y-4">
-
-        @forelse ($schools as $school)
-
-            @php
-                $teacher = $school->portions_sum_teacher_portions ?? 0;
-                $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
-                $tambahan = $teacher + $nonTeacher;
-
-                $small = $school->portions_sum_small_portions;
-                $big = $school->portions_sum_big_portions;
-
-                if ($big != 0) {
-                    $bigFinal = $big + $tambahan;
-                    $smallFinal = $small;
-                } else {
-                    $smallFinal = $small + $tambahan;
-                    $bigFinal = $big;
-                }
-            @endphp
-
-            <div class="bg-white shadow rounded-xl p-4 space-y-2">
-
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h2 class="font-semibold">
-                            {{ $school->school_name }}
-                            <p class="text-sm font-light">{{ $school->address }}</p>
-                        </h2>
-                        <p class="text-xs text-slate-500">
-                            {{ $school->school_code }}
-                        </p>
+                        </span>
                     </div>
-
-                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                        {{ $school->school_level->label() }}
-                    </span>
+        
+                    <h3 class="text-base font-semibold text-slate-800 leading-tight">
+                        {{ $school->school_name }}
+                    </h3>
+        
+                    <p class="text-xs text-slate-500 leading-snug max-w-xl text-wrap">
+                        {{ $school->address }}
+                    </p>
+        
                 </div>
-
-                <div class="grid grid-cols-2 text-sm gap-2 pt-2">
-                    <div>
-                        <span class="text-slate-500 text-xs">PK</span>
-                        <div class="font-medium">{{ $smallFinal }}</div>
+            </x-slot:value>
+        
+            {{-- STATS + PIC --}}
+            <x-slot:sub-value>
+                <div class="flex flex-col md:flex-row md:items-center gap-6 mt-3">
+        
+                    {{-- STAT CARD --}}
+                    <div class="flex gap-4">
+        
+                        <div class="bg-slate-50 rounded-xl px-4 py-3 text-center min-w-[80px]">
+                            <div class="text-[10px] uppercase tracking-wide text-slate-400">
+                                PK
+                            </div>
+                            <div class="text-lg font-semibold text-primary">
+                                {{ $smallFinal }}
+                            </div>
+                        </div>
+        
+                        <div class="bg-slate-50 rounded-xl px-4 py-3 text-center min-w-[80px]">
+                            <div class="text-[10px] uppercase tracking-wide text-slate-400">
+                                PB
+                            </div>
+                            <div class="text-lg font-semibold text-secondary">
+                                {{ $bigFinal }}
+                            </div>
+                        </div>
+        
                     </div>
-
-                    <div>
-                        <span class="text-slate-500 text-xs">PB</span>
-                        <div class="font-medium">{{ $bigFinal }}</div>
+        
+                    {{-- PIC INFO --}}
+                    <div class="text-xs text-right md:text-left">
+                        <div class="text-slate-400 uppercase tracking-wide text-[10px]">
+                            PIC
+                        </div>
+                        <div class="font-medium text-slate-700">
+                            {{ $school->pic_name }}
+                        </div>
+                        <div class="text-slate-400">
+                            {{ $school->pic_phone_number }}
+                        </div>
                     </div>
+        
                 </div>
+            </x-slot:sub-value>
+        
+            {{-- ACTIONS --}}
+            <x-slot:actions>
+                <x-dropdown>
+                    
+                    <x-slot:trigger>
+                        <x-button 
+                            icon="o-ellipsis-vertical" 
+                            class="btn-circle btn-sm btn-ghost" 
+                        />
+                    </x-slot:trigger>
 
-                <div class="pt-2 border-t text-sm">
-                    <div class="font-medium">{{ $school->pic_name }}</div>
-                    <div class="text-xs text-slate-500">
-                        {{ $school->pic_phone_number }}
-                    </div>
-                </div>
+                    <x-menu-item 
+                        title="Detail"
+                        icon="o-eye"
+                        link="{{ route('school.detail', ['school_id' => $school->id]) }}"
+                    />
 
-                <div class="flex gap-2 pt-2">
-                    <a href="{{ route('school.detail', ['school_id' => $school->id]) }}" class="text-blue-600 hover:underline text-xs">View</a>
-                    <a href="{{ route('school.edit', ['school_id' => $school->id]) }}" class="text-yellow-600 hover:underline text-xs">Edit</a>
-                    <button 
+                    <x-menu-item 
+                        title="Edit"
+                        icon="o-pencil"
+                        link="{{ route('school.edit', ['school_id' => $school->id]) }}"
+                    />
+
+                    <x-menu-item 
+                        title="Update Porsi"
+                        icon="o-cursor-arrow-ripple"
+                        wire:click="openModal({{ $school->id }})"
+                    />
+                    
+                    <x-menu-item 
+                        title="Hapus"
+                        icon="o-trash"
                         wire:click="delete_school({{ $school->id }})"
                         wire:confirm="Yakin mau hapus sekolah ini?"
-                        class="text-red-600 hover:underline text-xs"
-                    >
-                        Hapus
-                    </button>
-                </div>
+                        class="text-error"
+                    />
 
-            </div>
+                </x-dropdown>
+            </x-slot:actions>
 
+        
+        </x-list-item>
+        
         @empty
-            <div class="text-center text-slate-400 py-6">
-                Belum ada data sekolah
-            </div>
+        
+        <div class="bg-white rounded-2xl border border-dashed border-slate-200 text-center py-12 text-slate-400">
+            Belum ada data sekolah
+        </div>
+        
         @endforelse
-
+        
     </div>
 
 </div>

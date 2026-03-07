@@ -31,8 +31,14 @@
     
             {{-- Right side actions --}}
             <x-slot:actions>
-                <x-button label="Dashboard" icon="o-envelope" link="/dashboard" class="btn-ghost btn-sm" responsive />
-                <x-button label="Biodata" icon="o-bell" link="/biodata" class="btn-ghost btn-sm" responsive />
+                <x-dropdown right>
+                    <x-slot:trigger>
+                        <x-button icon="o-bell" class="btn-circle" />
+                    </x-slot:trigger>
+                
+                    <x-menu-item title="Archive" />
+                    <x-menu-item title="Move" />
+                </x-dropdown>
             </x-slot:actions>
         </x-nav>
     
@@ -66,7 +72,8 @@
                     @endif
 
                     @if (Auth::user()->role->name == 'ASLAP')
-                        <x-menu-item title="Manajemen Sekolah" icon="o-document-text" link="{{ route('school.index') }}" route="school.index" />   
+                        <x-menu-item title="Manajemen Sekolah" icon="o-academic-cap" link="{{ route('school.index') }}" route="school.index" />   
+                        <x-menu-item title="Manajemen Posyandu" icon="o-squares-plus" badge="Lock" badge-classes="badge-soft badge-error" />   
                     @endif
 
                     <x-menu-separator />

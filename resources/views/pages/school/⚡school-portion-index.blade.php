@@ -6,6 +6,8 @@ use App\Models\SchoolPortion;
 
 new class extends Component
 {
+    public $breadcrumbs = [];
+
     public $selectedSchool = null;
 
     public $small_portions = 0;
@@ -14,6 +16,15 @@ new class extends Component
     public $non_teacher_portions = 0;
 
     public $histories = [];
+
+    public function mount()
+    {
+        $this->breadcrumbs = [
+            ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'Sekolah', 'link' => route('school.index')],
+            ['label' => 'Porsi Sekolah'],
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -97,30 +108,15 @@ new class extends Component
 };
 ?>
 
-<div class="space-y-6">
+<div>
+    <x-breadcrumbs :items="$breadcrumbs" class="mb-3" />
 
-    {{-- HEADER --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Histori Porsi
-            </h1>
-            <p class="text-sm text-slate-500">
-                Log perubahan porsi
-            </p>
-        </div>
-
-        <div class="flex gap-2 items-center">
-            <a href="{{ route('school.view') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
-                Daftar Sekolah
-            </a>
-            <a href="{{ route('school.log-portion') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow text-sm">
-                Log Porsi
-            </a>
-        </div>
-    </div>
+    <x-header title="Histori Porsi" subtitle="Log Perubahan Porsi" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('school.index') }}" route="school.index" label="Daftar Sekolah" />
+            <x-button link="{{ route('school.index') }}" route="school.log-portion" label="Log Porsi" />
+        </x-slot:actions>
+    </x-header>
 
     {{-- ===================== --}}
     {{-- SECTION PILIH SEKOLAH --}}
