@@ -122,33 +122,6 @@ new class extends Component
             </div>
         </div>
 
-        {{-- INFORMASI Kepala Sekolah --}}
-        <div>
-            <h2 class="text-lg font-semibold mb-4 border-b pb-2">
-                Kepala Sekolah
-            </h2>
-
-            <div class="grid md:grid-cols-3 gap-6 text-sm">
-
-                <div>
-                    <p class="text-slate-500 text-xs">Nama Kepala Sekolah</p>
-                    <p class="font-medium">{{ $school->hm_name }}</p>
-                </div>
-
-                <div>
-                    <p class="text-slate-500 text-xs">No. HP</p>
-                    <p class="font-medium">{{ $school->hm_phone_number ?? '-' }}</p>
-                </div>
-
-                <div>
-                    <p class="text-slate-500 text-xs">Email</p>
-                    <p class="font-medium">{{ $school->hm_email ?? '-' }}</p>
-                </div>
-
-            </div>
-        </div>
-
-
         {{-- INFORMASI PORSI --}}
         <div>
             <h2 class="text-lg font-semibold mb-4 border-b pb-2">

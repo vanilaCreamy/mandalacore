@@ -22,9 +22,6 @@ return new class extends Migration
             $table->string('pic_position')->nullable();
             $table->string('pic_phone_number')->nullable();
             $table->string('pic_email')->nullable();
-            $table->string('hm_name')->nullable();
-            $table->string('hm_phone_number')->nullable();
-            $table->string('hm_email')->nullable();
             $table->unsignedTinyInteger('route')->nullable(true);
             $table->timestamps();
             $table->softDeletes();

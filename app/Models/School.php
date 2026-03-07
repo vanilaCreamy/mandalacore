@@ -27,9 +27,6 @@ class School extends Model
         'pic_position',
         'pic_phone_number',
         'pic_email',
-        'hm_name',
-        'hm_phone_number',
-        'hm_email',
         'route',
     ];
 
