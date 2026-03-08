@@ -7,6 +7,11 @@ use App\enum\SchoolLevel;
 
 new class extends Component
 {
+    public $small_portions;
+    public $big_portions;
+    public $teacher_portions;
+    public $non_teacher_portions;
+
     public $school_portion_modal = false;
     public $selected_school;
 
@@ -33,6 +38,38 @@ new class extends Component
             ['icon' => 's-home', 'link' => route('dashboard')],
             ['label' => 'Sekolah'],
         ];
+    }
+
+    public function savePortion($id)
+    {
+        SchoolPortion::create([
+            'school_id' => $id,
+            'small_portions' => $this->small_portions ?? 0 ,
+            'big_portions' => $this->big_portions ?? 0,
+            'teacher_portions' => $this->teacher_portions ?? 0,
+            'non_teacher_portions' => $this->non_teacher_portions ?? 0,
+        ]);
+
+        
+        $this->reset([
+            'small_portions',
+            'big_portions',
+            'teacher_portions',
+            'non_teacher_portions',
+        ]);
+
+        $this->selected_school = School::withSum('portions', 'small_portions')
+            ->withSum('portions', 'big_portions')
+            ->withSum('portions', 'teacher_portions')
+            ->withSum('portions', 'non_teacher_portions')
+            ->find($id);
+    }
+
+    public function delete_school($id)
+    {
+        $sch = School::find($id);
+
+        $sch->delete();
     }
 
     public function getSchoolsProperty()
@@ -192,7 +229,7 @@ new class extends Component
                     <x-button 
                         label="Simpan Perubahan" 
                         class="btn-primary"
-                        wire:click="updatePortions"
+                        wire:click="savePortion({{ $selected_school?->id }})"
                         spinner
                     />
 
@@ -327,6 +364,15 @@ new class extends Component
                             </div>
                             <div class="text-lg font-semibold text-secondary">
                                 {{ $bigFinal }}
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl px-4 py-3 text-center min-w-[80px]">
+                            <div class="text-[10px] uppercase tracking-wide text-slate-400">
+                                TP / @if ($big != 0) PB @else PK @endif
+                            </div>
+                            <div class="text-lg font-semibold text-secondary">
+                                {{ $tambahan }}
                             </div>
                         </div>
         

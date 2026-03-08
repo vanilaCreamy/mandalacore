@@ -102,7 +102,7 @@ new class extends Component
 <div>
     <x-breadcrumbs :items="$breadcrumbs" />
 
-    <x-header title="Tambah Sekolah Baru" subtitle="Input data sekolah" separator>
+    <x-header title="Pembaruan Data Sekolah" subtitle="Edit data sekolah" separator>
         <x-slot:actions>
             <x-button link="{{ route('school.view', $this->school->id) }}" route="school.view" icon="o-arrow-left" label="Kembali" class="btn-dash" />
             <x-button link="{{ route('school.index') }}" route="school.index" label="Daftar Sekolah" />
@@ -131,135 +131,8 @@ new class extends Component
             <x-input label="Email PIC" wire:model="pic_email" />
         </div>
         
-        {{-- INFORMASI KEPALA SEKOLAH --}}
-        <h2 class="font-semibold border-b pb-2">Informasi Kepala Sekolah (Head Master)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-input label="Nama Kepala Sekolah" wire:model="hm_name" />
-        </div>
-        
         <x-slot:actions>
             <x-button label="Simpan Perubahan" class="btn-primary" type="submit" spinner="save" />
         </x-slot:actions>
     </x-form>
-
-
-    <form wire:submit.prevent="save" class="space-y-8">
-
-        {{-- INFORMASI SEKOLAH --}}
-        <div class="bg-white p-6 rounded-2xl shadow space-y-6">
-            <h2 class="font-semibold border-b pb-2">Informasi Sekolah</h2>
-
-            <div class="grid md:grid-cols-2 gap-6">
-
-                <div>
-                    <label class="text-xs text-slate-500">Kode Sekolah</label>
-                    <input type="text" wire:model="school_code"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('school_code') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Nama Sekolah</label>
-                    <input type="text" wire:model="school_name"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('school_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="text-xs text-slate-500">Alamat</label>
-                    <textarea wire:model="address"
-                              class="w-full border rounded-lg px-3 py-2"></textarea>
-                    @error('address') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Level Sekolah</label>
-                    <select wire:model="school_level"
-                            class="w-full border rounded-lg px-3 py-2">
-                        <option value="">Pilih Level</option>
-                        @foreach (SchoolLevel::cases() as $item)
-                            <option value="{{ $item->name }}">{{ $item->label() }}</option>
-                        @endforeach
-                    </select>
-                    @error('school_level') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-            </div>
-        </div>
-
-        {{-- INFORMASI PIC --}}
-        <div class="bg-white p-6 rounded-2xl shadow space-y-6">
-            <h2 class="font-semibold border-b pb-2">Informasi PIC</h2>
-
-            <div class="grid md:grid-cols-3 gap-6">
-
-                <div>
-                    <label class="text-xs text-slate-500">Nama PIC</label>
-                    <input type="text" wire:model="pic_name"
-                           class="w-full border rounded-lg px-3 py-2">
-                    @error('pic_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Jabatan PIC</label>
-                    <input type="text" wire:model="pic_position"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">No HP PIC</label>
-                    <input type="text" wire:model="pic_phone_number"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Email PIC</label>
-                    <input type="email" wire:model="pic_email"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-            </div>
-        </div>
-
-
-        {{-- INFORMASI KEPALA SEKOLAH --}}
-        <div class="bg-white p-6 rounded-2xl shadow space-y-6">
-            <h2 class="font-semibold border-b pb-2">
-                Informasi Kepala Sekolah (Head Master)
-            </h2>
-
-            <div class="grid md:grid-cols-3 gap-6">
-
-                <div>
-                    <label class="text-xs text-slate-500">Nama Kepala Sekolah</label>
-                    <input type="text" wire:model="hm_name"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">No HP</label>
-                    <input type="text" wire:model="hm_phone_number"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Email</label>
-                    <input type="email" wire:model="hm_email"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-            </div>
-        </div>
-
-
-        {{-- SUBMIT --}}
-        <div class="flex justify-end">
-            <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
-                Update Sekolah
-            </button>
-        </div>
-
-    </form>
-
 </div>

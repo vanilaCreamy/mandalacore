@@ -32,11 +32,7 @@ new class extends Component
             'pic_name' => 'required|string|max:255',
             'pic_position' => 'nullable|string|max:255',
             'pic_phone_number' => 'nullable|string|max:20',
-            'pic_email' => 'nullable|email',
-
-            'hm_name' => 'nullable|string|max:255',
-            'hm_phone_number' => 'nullable|string|max:20',
-            'hm_email' => 'nullable|email',
+            'pic_email' => 'nullable|email'
         ];
     }
 
@@ -50,7 +46,7 @@ new class extends Component
         }
 
         // Hitung jumlah sekolah dengan level yang sama
-        $count = School::where('school_level', $level)->count();
+        $count = School::withTrashed()->where('school_level', $level)->count();
 
         $index = $count + 1;
         // Format jadi 3 digit
@@ -82,13 +78,10 @@ new class extends Component
             'pic_name' => $this->pic_name,
             'pic_position' => $this->pic_position,
             'pic_phone_number' => $this->pic_phone_number,
-            'pic_email' => $this->pic_email,
-            'hm_name' => $this->hm_name,
-            'hm_phone_number' => $this->hm_phone_number,
-            'hm_email' => $this->hm_email,
+            'pic_email' => $this->pic_email
         ]);
 
-        return redirect()->route('school.view')
+        return redirect()->route('school.index')
             ->with('success', 'Sekolah berhasil ditambahkan.');
     }
 };
@@ -107,7 +100,7 @@ new class extends Component
             </p>
         </div>
 
-        <a href="{{ route('school.view') }}"
+        <a href="{{ route('school.index') }}"
            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm">
             ← Kembali
         </a>
@@ -192,37 +185,6 @@ new class extends Component
 
             </div>
         </div>
-
-
-        {{-- INFORMASI KEPALA SEKOLAH --}}
-        <div class="bg-white p-6 rounded-2xl shadow space-y-6">
-            <h2 class="font-semibold border-b pb-2">
-                Informasi Kepala Sekolah (Head Master)
-            </h2>
-
-            <div class="grid md:grid-cols-3 gap-6">
-
-                <div>
-                    <label class="text-xs text-slate-500">Nama Kepala Sekolah</label>
-                    <input type="text" wire:model="hm_name"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">No HP</label>
-                    <input type="text" wire:model="hm_phone_number"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="text-xs text-slate-500">Email</label>
-                    <input type="email" wire:model="hm_email"
-                           class="w-full border rounded-lg px-3 py-2">
-                </div>
-
-            </div>
-        </div>
-
 
         {{-- SUBMIT --}}
         <div class="flex justify-end">
