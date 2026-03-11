@@ -93,7 +93,7 @@ new class extends Component
                 'hm_email' => $this->hm_email,
             ]);
 
-            return redirect()->route('school.detail', ['school_id' => $this->school->id])
+            return redirect()->route('school.view', ['school_id' => $this->school->id])
                 ->with('success', 'Sekolah berhasil ditambahkan.');
         }
 };

@@ -7,16 +7,6 @@ use App\Models\SchoolPortion;
 new class extends Component
 {
     public $breadcrumbs = [];
-    public $search = '';
-
-    public $selectedSchool = null;
-
-    public $small_portions = 0;
-    public $big_portions = 0;
-    public $teacher_portions = 0;
-    public $non_teacher_portions = 0;
-
-    public $histories = [];
 
     public function mount()
     {
@@ -29,12 +19,12 @@ new class extends Component
 
     public function getSchoolPortionsProperty()
     {
-        return SchoolPortion::query()
-            ->when($this->search, function ($query) {
-                $query->whereHas('school', function ($q) {
-                    $q->where('school_name', 'like', '%' . $this->search . '%');
-                });
-            })->get();
+        return SchoolPortion::with([
+            'school' => function ($q) {
+                $q->withTrashed();
+            }
+        ])->latest()->get();
+
     }
 };
 ?>
@@ -76,7 +66,11 @@ new class extends Component
                 {{-- Header --}}
                 <div class="mb-3">
                     <h3>
+                        @if ($item->school->trashed())
+                        {{ $item->school->school_name }} - {{ $item->school->school_code }} <span class="font-light text-sm text-red-500">(Sekolah Tidak Aktif)</span>
+                        @else
                         {{ $item->school->school_name }} - {{ $item->school->school_code }}
+                        @endif
                     </h3>
                     <h5 class="text-xs text-slate-500">
                         {{ $item->created_at->format('D, d M Y H:i') }}

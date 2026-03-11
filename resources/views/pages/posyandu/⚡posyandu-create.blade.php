@@ -5,6 +5,8 @@ use App\Models\Posyandu;
 
 new class extends Component
 {
+    public $breadcrumbs;
+
     public $posyandu_code;
     public $posyandu_name;
     public $address;
@@ -16,11 +18,17 @@ new class extends Component
     public function mount()
     {
         $this->posyandu_code = $this->generatePosyanduCode();
+
+        $this->breadcrumbs = [
+            ['icon' => 's-home', 'link' => route('dashboard')],
+            ['label' => 'Posyandu', 'link' => route('posyandu.index')],
+            ['label' => 'Buat Posyandu Baru']
+        ];
     }
 
     private function generatePosyanduCode()
     {
-        $count = Posyandu::count();
+        $count = Posyandu::withTrashed()->count();
         $index = $count + 1;
 
         $indexFormatted = sprintf('%03d', $index);
@@ -57,30 +65,20 @@ new class extends Component
             'cadre_email' => $this->cadre_email,
         ]);
 
-        return redirect()->route('posyandu.view')
+        return redirect()->route('posyandu.index')
             ->with('success', 'Posyandu berhasil ditambahkan.');
     }
 };
 ?>
 
 <div class="space-y-6">
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    {{-- HEADER --}}
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Tambah Posyandu Baru
-            </h1>
-            <p class="text-sm text-slate-500">
-                Input data Posyandu
-            </p>
-        </div>
-
-        <a href="{{ route('posyandu.view') }}"
-           class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm">
-            ← Kembali
-        </a>
-    </div>
+    <x-header title="Tambah Posyandu Baru" subtitle="Input data Posyandu" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('posyandu.index') }}" route="posyandu.index" icon="o-arrow-left" label="Kembali" class="btn-dash" />
+        </x-slot:actions>
+    </x-header>
 
 
     <form wire:submit.prevent="save" class="space-y-8">

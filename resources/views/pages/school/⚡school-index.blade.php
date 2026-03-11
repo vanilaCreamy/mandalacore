@@ -19,11 +19,6 @@ new class extends Component
     public $search = '';
     public $level = '';
 
-    // table
-    public $headers = [
-        ['key' => '']  
-    ];
-
     public function mount()
     {
         $this->schools = School::withSum('portions', 'small_portions')

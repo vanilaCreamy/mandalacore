@@ -7,6 +7,8 @@ use Carbon\Carbon;
 
 new class extends Component
 {
+    public $breadcrumbs;
+
     public $school_code;
     public $school_name;
     public $address;
@@ -17,9 +19,14 @@ new class extends Component
     public $pic_phone_number;
     public $pic_email;
 
-    public $hm_name;
-    public $hm_phone_number;
-    public $hm_email;
+    public function mount()
+    {
+        $this->breadcrumbs = [
+            ['icon' => 's-home', 'link' => route('dashboard')],
+            ['label' => 'Sekolah', 'link' => route('school.index')],
+            ['label' => 'Buat Sekolah Baru']
+        ];
+    }
 
     protected function rules()
     {
@@ -88,24 +95,13 @@ new class extends Component
 ?>
 
 <div class="space-y-6">
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    {{-- HEADER --}}
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">
-                Tambah Sekolah Baru
-            </h1>
-            <p class="text-sm text-slate-500">
-                Input data sekolah
-            </p>
-        </div>
-
-        <a href="{{ route('school.index') }}"
-           class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm">
-            ← Kembali
-        </a>
-    </div>
-
+    <x-header title="Tambah Sekolah Baru" subtitle="Input data sekolah" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('school.index') }}" route="school.index" icon="o-arrow-left" label="Kembali" class="btn-dash" />
+        </x-slot:actions>
+    </x-header>
 
     <form wire:submit.prevent="save" class="space-y-8">
 

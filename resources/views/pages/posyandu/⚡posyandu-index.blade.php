@@ -6,6 +6,10 @@ use App\Models\PosyanduPortion;
 
 new class extends Component
 {
+    public $bumil;
+    public $busui;
+    public $balita;
+
     public $posyandu_portion_modal = false;
     public $selected_posyandu;
 
@@ -23,6 +27,35 @@ new class extends Component
             ['icon' => 's-home', 'link' => route('dashboard')],
             ['label' => 'Posyandu'],
         ];
+    }
+
+    public function savePortion($id)
+    {
+        PosyanduPortion::create([
+            'posyandu_id' => $id,
+            'bumil' => $this->bumil ?? 0 ,
+            'busui' => $this->busui ?? 0,
+            'balita' => $this->balita ?? 0,
+        ]);
+
+        
+        $this->reset([
+            'bumil',
+            'busui',
+            'balita',
+        ]);
+
+        $this->selected_posyandu = Posyandu::withSum('portions', 'bumil')
+            ->withSum('portions', 'busui')
+            ->withSum('portions', 'balita')
+            ->find($id);
+    }
+
+    public function delete_posyandu($id)
+    {
+        $sch = Posyandu::find($id);
+
+        $sch->delete();
     }
 
     public function getPosyandusProperty()
@@ -66,27 +99,6 @@ new class extends Component
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
 
-                {{-- Porsi Ibu Hamil --}}
-                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
-                    <div class="text-xs uppercase tracking-wide text-slate-400">
-                        Busui
-                    </div>
-
-                    <x-input 
-                        type="number"
-                        wire:model="busui"
-                        icon="o-chevron-up-down"
-                        placeholder="0"
-                    />
-
-                    <div class="text-xs text-slate-500">
-                        Saat ini:
-                        <span class="font-semibold text-primary">
-                            {{ $selected_posyandu?->portions_sum_busui ?? 0 }}
-                        </span>
-                    </div>
-                </div>
-
                 {{-- Porsi Ibu Menyusui --}}
                 <div class="bg-slate-50 rounded-xl p-1 space-y-2">
                     <div class="text-xs uppercase tracking-wide text-slate-400">
@@ -104,6 +116,27 @@ new class extends Component
                         Saat ini:
                         <span class="font-semibold text-secondary">
                             {{ $selected_posyandu?->portions_sum_bumil ?? 0 }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Porsi Ibu Hamil --}}
+                <div class="bg-slate-50 rounded-xl p-1 space-y-2">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">
+                        Busui
+                    </div>
+
+                    <x-input 
+                        type="number"
+                        wire:model="busui"
+                        icon="o-chevron-up-down"
+                        placeholder="0"
+                    />
+
+                    <div class="text-xs text-slate-500">
+                        Saat ini:
+                        <span class="font-semibold text-primary">
+                            {{ $selected_posyandu?->portions_sum_busui ?? 0 }}
                         </span>
                     </div>
                 </div>
@@ -143,7 +176,7 @@ new class extends Component
                     <x-button 
                         label="Simpan Perubahan" 
                         class="btn-primary"
-                        wire:click="updatePortions"
+                        wire:click="savePortion({{ $selected_posyandu?->id }})"
                         spinner
                     />
 
@@ -273,7 +306,7 @@ new class extends Component
                     <x-menu-item 
                         title="Detail"
                         icon="o-eye"
-                        link="{{ route('posyandu.detail', ['posyandu_id' => $posyandu->id]) }}"
+                        link="{{ route('posyandu.view', ['posyandu_id' => $posyandu->id]) }}"
                     />
 
                     <x-menu-item 
