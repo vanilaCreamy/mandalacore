@@ -1,8 +1,8 @@
 <?php
 
 use Livewire\Component;
-use App\Enum\DriverCategory;
-use App\Enum\DriverFlow;
+use App\enum\DriverCategory;
+use App\enum\DriverFlow;
 use App\Models\SchoolDelivery;
 use App\Models\School;
 use App\Models\DriverLocation;
