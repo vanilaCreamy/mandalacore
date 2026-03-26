@@ -6,6 +6,12 @@
 
         <title>{{ $title ?? config('app.name') }}</title>
 
+        {{-- Leaflet & Cluster CDN --}}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
@@ -72,8 +78,14 @@
                     @endif
 
                     @if (Auth::user()->role->name == 'ASLAP')
-                        <x-menu-item title="Manajemen Sekolah" icon="o-academic-cap" link="{{ route('school.index') }}" route="school.index" />   
-                        <x-menu-item title="Manajemen Posyandu" icon="o-squares-plus" link="{{ route('posyandu.index') }}" route="posyandu.index" />   
+                        <x-menu-item title="Data Sekolah" icon="o-academic-cap" link="{{ route('school.index') }}" route="school.index" />   
+                        <x-menu-item title="Data Posyandu" icon="o-squares-plus" link="{{ route('posyandu.index') }}" route="posyandu.index" /> 
+                        <x-menu-separator /> 
+                        <x-menu-item title="Manajemen Distribusi" icon="o-truck" link="{{ route('distribution.index') }}" route="distribution.index" />   
+                    @endif
+
+                    @if (Auth::user()->role->name == 'DISTRIBUSI')
+                        <x-menu-item title="Distribusi" icon="o-users" link="{{ route('distribution.index') }}" route="distribution.index" />   
                     @endif
 
                     <x-menu-separator />

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('school_deliveries', function (Blueprint $table) {
             $table->id();
             $table->dateTime('timestamp');
+            $table->foreignId('prev_log_id')->nullable()->constrained('school_deliveries', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('category', DriverCategory::cases());
             $table->enum('flow', DriverFlow::cases());
             $table->foreignId('school_id')->constrained('schools','id')->cascadeOnUpdate();
@@ -30,6 +31,7 @@ return new class extends Migration
         Schema::create('posyandu_deliveries', function (Blueprint $table) {
             $table->id();
             $table->dateTime('timestamp');
+            $table->foreignId('prev_log_id')->nullable()->constrained('posyandu_deliveries', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('category', DriverCategory::cases());
             $table->enum('flow', DriverFlow::cases());
             $table->foreignId('posyandu_id')->constrained('posyandu','id')->cascadeOnUpdate();

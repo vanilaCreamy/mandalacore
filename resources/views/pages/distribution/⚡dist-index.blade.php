@@ -1,199 +1,148 @@
 <?php
 
 use Livewire\Component;
+use App\Models\User;
 use App\Models\Posyandu;
 use App\Models\School;
 use App\Models\PosyanduDelivery;
 use App\Models\SchoolDelivery;
 
+
 new class extends Component
 {
     public $selectedDate;
+    public $breadcrumbs;
+
+    public $schools;
+    public $school_log;
 
     public function mount()
     {
         $this->selectedDate = now()->toDateString();
+
+        $this->schools = School::all();
+        $this->loadLogs();
+
+        $this->breadcrumbs = [
+            ['icon' => 's-home', 'link' => route('dashboard')],
+            ['label' => 'Distribusi'],
+        ];
     }
-
-    public function getPosyandusProperty()
+    
+    public function loadLogs()
     {
-        return Posyandu::orderBy('posyandu_name')->get();
-    }
-
-    public function getSchoolsProperty()
-    {
-        return School::orderBy('school_name')->get();
-    }
-
-    /* ======================
-       STATUS CHECKER
-    =======================*/
-
-    public function getPosyanduStatus($posyanduId)
-    {
-        $logs = PosyanduDelivery::where('posyandu_id', $posyanduId)
-            ->whereDate('timestamp', $this->selectedDate)
-            ->get();
-
-        if ($logs->isEmpty()) {
-            return 'belum';
-        }
-
-        $hasBerangkat = $logs->where('flow', 'berangkat')->count();
-        $hasTiba = $logs->where('flow', 'tiba')->count();
-
-        if ($hasBerangkat && $hasTiba) {
-            return 'terkirim';
-        }
-
-        return 'diperjalanan';
-    }
-
-    public function getSchoolStatus($schoolId)
-    {
-        $logs = SchoolDelivery::where('school_id', $schoolId)
-            ->whereDate('timestamp', $this->selectedDate)
-            ->get();
-
-        if ($logs->isEmpty()) {
-            return 'belum';
-        }
-
-        $hasBerangkat = $logs->where('flow', 'berangkat')->count();
-        $hasTiba = $logs->where('flow', 'tiba')->count();
-
-        if ($hasBerangkat && $hasTiba) {
-            return 'terkirim';
-        }
-
-        return 'diperjalanan';
+        $this->school_log = SchoolDelivery::whereDate('created_at', $this->selectedDate)
+            ->latest()->get();
     }
 };
 ?>
 
-<div 
-    x-data="{ tab: 'posyandu' }"
-    class="p-4 sm:p-6 md:p-8 bg-gray-50 min-h-screen">
+<div>
+    <x-breadcrumbs :items="$breadcrumbs" />
 
-    <x-header title="Default size" subtitle="With subtitle and separator" />
-    <x-breadcrumbs :items="[['label' => 'Home','icon' => 's-home'],['label' => 'Distribusi'], ['label' => 'Daftar']]" separator="o-slash" />
-    <x-breadcrumbs :items="[['label' => 'Home'],['label' => 'Distribusi'], ['label' => 'Daftar']]" />
-    <x-breadcrumbs :items="[['label' => 'Home'],['label' => 'Distribusi'], ['label' => 'Daftar']]" />
-    <x-breadcrumbs :items="[['label' => 'Home'],['label' => 'Distribusi'], ['label' => 'Daftar']]" />
+    
+    <x-header title="Dashboard Distribusi" subtitle="Monitoring distribusi makanan" separator>
+        <x-slot:actions>
+            <x-button link="{{ route('distribution.driver-location') }}" label="Lokasi Driver" />
+            <x-button link="{{ route('distribution.log-index') }}" label="Pengiriman" class="btn-primary" />
+        </x-slot:actions>
+    </x-header>
 
-    {{-- HEADER --}}
-    <div class="mb-6 grid grid-cols-2 items-center">
-        <div class="">
-            <h1 class="text-xl md:text-2xl font-bold text-gray-800">
-                Manajemen Distribusi
-            </h1>
-            <p class="text-gray-500 text-sm">
-                Monitoring status pengiriman berdasarkan tanggal
-            </p>
-        </div>
-        <div class="flex items-center gap-2 justify-end">
-            <a href="{{ route('distribution.road-route') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                </svg>
-                <span>Rute Distribusi</span>
-            </a>
-        </div>
-    </div>
+    <x-collapse separator>
+        <x-slot:heading>
+            Ringkasan Pengiriman Ke Sekolah Hari Ini
+        </x-slot:heading>
+        <x-slot:content>
+            <div wire:poll.10s class="space-y-3">
+                @php
+                    $totalSchools = $schools->count();
 
-    {{-- DATE INPUT --}}
-    <div class="mb-6">
-        <input type="date"
-            wire:model.live="selectedDate"
-            class="border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-    </div>
+                    $delivered = $schools->filter(function ($school) {
+                        return $school->school_logs
+                            ->where('flow', 'ARRIVE')
+                            ->first(fn($log) => $log->created_at->isToday());
+                    })->count();
 
-    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    $notDelivered = $totalSchools - $delivered;
+                @endphp
 
-        {{-- TAB HEADER --}}
-        <div class="flex border-b border-gray-100">
-            <button 
-                @click="tab = 'posyandu'"
-                :class="tab === 'posyandu' ? 'border-blue-600 text-blue-600 bg-blue-50' : 'text-gray-500'"
-                class="px-6 py-4 font-medium border-b-2 transition">
-                Posyandu
-            </button>
-
-            <button 
-                @click="tab = 'school'"
-                :class="tab === 'school' ? 'border-blue-600 text-blue-600 bg-blue-50' : 'text-gray-500'"
-                class="px-6 py-4 font-medium border-b-2 transition">
-                Sekolah
-            </button>
-        </div>
-
-        <div class="p-6">
-
-            {{-- POSYANDU --}}
-            <div x-show="tab === 'posyandu'" x-transition>
-                <div class="space-y-3">
-                    @foreach ($this->posyandus as $posyandu)
-
-                        @php $status = $this->getPosyanduStatus($posyandu->id); @endphp
-
-                        <div class="flex justify-between items-center p-4 border rounded-xl">
-
-                            <span class="font-medium text-gray-800">
-                                {{ $posyandu->posyandu_name }}
-                            </span>
-
-                            @if ($status === 'belum')
-                                <span class="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                                    Belum Dikirim
-                                </span>
-                            @elseif ($status === 'diperjalanan')
-                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700">
-                                    Diperjalanan
-                                </span>
-                            @else
-                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
-                                    Terkirim
-                                </span>
-                            @endif
-
-                        </div>
-                    @endforeach
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <x-stat
+                        title="Total Sekolah"
+                        value="{{ $totalSchools }}"
+                        icon="o-building-office"
+                        tooltip="Jumlah seluruh sekolah hari ini"
+                        color="text-primary" />
+                
+                    <x-stat
+                        title="Terkirim"
+                        value="{{ $delivered }}"
+                        icon="o-check-circle"
+                        tooltip="Sekolah yang sudah menerima hari ini"
+                        color="text-green-500" />
+                
+                    <x-stat
+                        title="Belum Dikirim"
+                        value="{{ $notDelivered }}"
+                        icon="o-x-circle"
+                        tooltip="Sekolah yang belum menerima hari ini"
+                        color="text-red-500" />
                 </div>
-            </div>
+                
+                @foreach ($schools as $school)
+                <x-card>
+                    @php
+                        $todayLogs = $school->school_logs
+                            ->where('flow', 'ARRIVE')
+                            ->filter(fn($log) => $log->created_at->isToday());
+                    @endphp
 
-            {{-- SCHOOL --}}
-            <div x-show="tab === 'school'" x-transition>
-                <div class="space-y-3">
-                    @foreach ($this->schools as $school)
-
-                        @php $status = $this->getSchoolStatus($school->id); @endphp
-
-                        <div class="flex justify-between items-center p-4 border rounded-xl">
-
-                            <span class="font-medium text-gray-800">
+                    <div class="flex items-center justify-between border-b-2 p-2">
+                        <div>
+                            <h3 class="font-bold text-lg">
                                 {{ $school->school_name }}
-                            </span>
-
-                            @if ($status === 'belum')
-                                <span class="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
-                                    Belum Dikirim
-                                </span>
-                            @elseif ($status === 'diperjalanan')
-                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700">
-                                    Diperjalanan
-                                </span>
-                            @else
-                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
-                                    Terkirim
-                                </span>
-                            @endif
-
+                            </h3>
+                
+                            <div class="flex gap-2 mt-1 items-center">
+                                <x-badge value="{{ $school->school_code }}" class="badge-outline badge-sm" />
+                            </div>
                         </div>
+                        <div class="">
+                            @if ($todayLogs->first())
+                            <span class="p-2 rounded-xl bg-green-500 text-white">Terkirim</span>
+                            @else
+                            <span class="p-2 rounded-xl bg-red-500 text-white">Belum Dikirim</span>
+                            @endif
+                        </div>
+                    </div>
+        
+                    @foreach ($todayLogs as $item)
+                    <div class="border-b py-2 text-sm">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold"><x-icon name="o-user" />{{ $item->driver->name }}</p>
+                                <p class="text-xs text-gray-400">
+                                    <x-icon name="o-truck" class="w-3 h-3" />{{ $item->prev_log?->created_at?->format('H:i') }} → 
+                                    <x-icon name="o-sparkles" class="w-3 h-3" />{{ $item->created_at->format('H:i') }}
+                                </p>
+                            </div>
+        
+                            <div class="flex gap-3 text-center">
+                                <div>
+                                    <p class="text-xs text-gray-400">PK</p>
+                                    <p class="font-bold text-primary">{{ $item->amount_pk }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400">PB</p>
+                                    <p class="font-bold text-secondary">{{ $item->amount_pb }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @endforeach
-                </div>
+                </x-card>
+                @endforeach
             </div>
-
-        </div>
-    </div>
-
+        </x-slot:content>
+    </x-collapse>
 </div>

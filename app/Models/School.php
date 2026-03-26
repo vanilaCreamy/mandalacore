@@ -19,10 +19,6 @@ class School extends Model
         'school_name',
         'address',
         'school_level',
-        'small_portions',
-        'big_portions',
-        'teacher_portions',
-        'non_teacher_portions',
         'pic_name',
         'pic_position',
         'pic_phone_number',
@@ -45,5 +41,10 @@ class School extends Model
     public function portions()
     {
         return $this->hasMany(SchoolPortion::class);
+    }
+
+    public function school_logs()
+    {
+        return $this->hasMany(SchoolDelivery::class);
     }
 }

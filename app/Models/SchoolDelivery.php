@@ -16,6 +16,7 @@ class SchoolDelivery extends Model
      */
     protected $fillable = [
         'timestamp',
+        'prev_log_id',
         'category',
         'flow',
         'school_id',
@@ -44,5 +45,15 @@ class SchoolDelivery extends Model
     {
         return $this->belongsTo(School::class, 'school_id');
 
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(User::class, 'driver_id', 'id');
+    }
+
+    public function prev_log()
+    {
+        return $this->belongsTo(SchoolDelivery::class, 'prev_log_id', 'id');
     }
 }

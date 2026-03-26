@@ -12,7 +12,7 @@ enum UserRole: string
     case PERSIAPAN = "PERSIAPAN";
     case PENGOLAHAN = "PENGOLAHAN";
     case PEMORSIAN = "PEMORSIAN";
-    case DRIVER = "DRIVER";
+    case DISTRIBUSI = "DISTRIBUSI";
     case PENCUCIAN = "PENCUCIAN";
 
     public function label()
@@ -26,8 +26,25 @@ enum UserRole: string
             self::PERSIAPAN => 'Persiapan',
             self::PENGOLAHAN => 'Pengolahan',
             self::PEMORSIAN => 'Pemorsian',
-            self::DRIVER => 'Driver',
+            self::DISTRIBUSI => 'Distribusi',
             self::PENCUCIAN => 'Pencucian',
+        };
+    }
+
+    public function dashboardType(): string
+    {
+        return match ($this) {
+            self::ADMIN,
+            self::KEPALA,
+            self::PLOG,
+            self::PLOK,
+            self::ASLAP => 'management',
+
+            self::PERSIAPAN,
+            self::PENGOLAHAN,
+            self::PEMORSIAN,
+            self::DISTRIBUSI,
+            self::PENCUCIAN => 'operational',
         };
     }
 }
