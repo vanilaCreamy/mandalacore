@@ -14,24 +14,25 @@ class AccountCreated extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public User $user;
-
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+    public function __construct(
+        protected User $user,
+    )
+    {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Akun Anda Berhasil Dibuat',
+            subject: 'Account Created',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.account-created',
+            markdown: 'emails.account-created',
+            with: [
+                'user' => $this->user
+            ]
         );
     }
 }

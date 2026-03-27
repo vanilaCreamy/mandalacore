@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\UserInformation;
 use Livewire\Attributes\On;
 use App\enum\UserRole; 
+use App\Mail\AccountCreated; 
 use Illuminate\Validation\Rule;
 
 
@@ -48,27 +49,33 @@ new class extends Component
     
     public function save()
     {
-        $this->validate();
+        $mail_user = User::find(7);
+        Mail::to($mail_user->email)->queue(new AccountCreated($mail_user));
 
-        $new_user = User::create([
-            'name' => $this->user_name,
-            'email' => $this->user_email,
-            'password' => Hash::make('password'),
-            'role' => $this->user_role,
-        ]);
+        // $this->validate();
 
-        UserInformation::create([
-            'user_id' => $new_user->id
-        ]);
+        // $new_user = User::create([
+        //     'name' => $this->user_name,
+        //     'email' => $this->user_email,
+        //     'password' => Hash::make('password'),
+        //     'role' => $this->user_role,
+        // ]);
 
-        // ✅ Reset field
-        $this->reset(['user_name', 'user_email', 'user_role']);
+        // UserInformation::create([
+        //     'user_id' => $new_user->id
+        // ]);
 
-        // ✅ Tutup modal
-        $this->user_modal = false;
+        // // ✅ Reset field
+        // $this->reset(['user_name', 'user_email', 'user_role']);
 
-        // ✅ Dispatch event
-        $this->dispatch('user-created');
+        // // ✅ Tutup modal
+        // $this->user_modal = false;
+
+        // // ✅ Dispatch event
+        // $this->dispatch('user-created');
+
+        // // Dispatch Email
+        // Mail::to($new_user->email)->queue(new AccountCreated($new_user));
     }
 
     #[On('user-created')] 
