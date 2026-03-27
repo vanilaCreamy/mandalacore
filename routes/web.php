@@ -10,42 +10,7 @@ Route::middleware(['guest'])->group(function () {
     Route::livewire('/login', 'pages::login-page')->name('login');
 });
 
-Route::middleware(['auth'])->group(function () {
-
-    // Route::get('/dashboard', function () {
-    //     $role = Auth::user()->role->name;
-
-    //     return match ($role) {
-    //         'ADMIN'   => redirect()->route('dashboard.admin'),
-    //         'HEAD'   => redirect()->route('dashboard.head'),
-    //         'PLOG'   => redirect()->route('dashboard.plog'),
-    //         'PLOK'   => redirect()->route('dashboard.plok'),
-    //         'ASLAP'   => redirect()->route('dashboard.aslap'),
-    //         'DRIVER'  => redirect()->route('dashboard.driver'),
-    //         'relawan' => redirect()->route('dashboard.relawan'),
-    //         default   => abort(403),
-    //     };
-    // })->name('dashboard');
-    
-
-    // Route::livewire('/dashboard/admin', 'pages::dashboard.admin-dashboard')
-    //     ->name('dashboard.admin');
-
-    // Route::livewire('/dashboard/head', 'pages::dashboard.hk-dashboard')
-    //     ->name('dashboard.head');
-
-    // Route::livewire('/dashboard/plog', 'pages::dashboard.plog-dashboard')
-    //     ->name('dashboard.plog');
-
-    // Route::livewire('/dashboard/plok', 'pages::dashboard.plok-dashboard')
-    //     ->name('dashboard.plok');
-
-    // Route::livewire('/dashboard/aslap', 'pages::dashboard.aslap-dashboard')
-    //     ->name('dashboard.aslap');
-
-    // Route::livewire('/dashboard/driver', 'pages::dashboard.driver-dashboard')
-    //     ->name('dashboard.driver');
-
+Route::middleware(['auth', 'user_active'])->group(function () {
 
     Route::get('/dashboard', function () {
         $role = Auth::user()->role;
@@ -70,19 +35,20 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('/change-password', 'pages::change-password')->name('change_password');
 
 
+    // Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::livewire('/user-blocked', 'pages::account-blocked')->name('account.blocked');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-// Route::middleware(['auth', 'driver_role'])->group(function () {
-//     Route::livewire('/log_distribution', 'pages::log_distribution')->name('log_distribution');
-// });
-
-Route::middleware(['auth', 'role:ADMIN'])->group(function () {
+Route::middleware(['auth', 'user_active', 'role:ADMIN'])->group(function () {
     Route::livewire('/users', 'pages::user.users')->name('user.view');
     Route::livewire('/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
 });
 
-Route::middleware(['auth', 'role:ADMIN,ASLAP'])->group(function () {
+Route::middleware(['auth', 'user_active', 'role:ADMIN,ASLAP'])->group(function () {
 
     Route::livewire('/schools', 'pages::school.school-index')->name('school.index');
     Route::livewire('/schools/create', 'pages::school.school-create')->name('school.create');
@@ -98,7 +64,7 @@ Route::middleware(['auth', 'role:ADMIN,ASLAP'])->group(function () {
     
 });
 
-Route::middleware(['auth', 'role:ADMIN,ASLAP,DISTRIBUSI'])->group(function () {
+Route::middleware(['auth', 'user_active', 'role:ADMIN,ASLAP,DISTRIBUSI'])->group(function () {
     Route::livewire('/distribusi', 'pages::distribution.dist-index')->name('distribution.index');
     Route::livewire('/distribusi/rute', 'pages::distribution.create-route')->name('distribution.route-index');
     Route::livewire('/distribusi/rute/assign', 'pages::distribution.assign-school-posyandu')->name('distribution.route-assign');
@@ -107,6 +73,6 @@ Route::middleware(['auth', 'role:ADMIN,ASLAP,DISTRIBUSI'])->group(function () {
 });
 
 // Khusus Driver
-Route::middleware(['auth', 'role:DISTRIBUSI'])->group(function () {
+Route::middleware(['auth', 'user_active', 'role:DISTRIBUSI'])->group(function () {
     Route::livewire('/distribusi/log', 'pages::distribution.create-school-log')->name('distribution.log-index');
 });
