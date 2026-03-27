@@ -49,33 +49,30 @@ new class extends Component
     
     public function save()
     {
-        $mail_user = User::find(7);
-        Mail::to($mail_user->email)->queue(new AccountCreated($mail_user));
+        $this->validate();
 
-        // $this->validate();
+        $new_user = User::create([
+            'name' => $this->user_name,
+            'email' => $this->user_email,
+            'password' => Hash::make('password'),
+            'role' => $this->user_role,
+        ]);
 
-        // $new_user = User::create([
-        //     'name' => $this->user_name,
-        //     'email' => $this->user_email,
-        //     'password' => Hash::make('password'),
-        //     'role' => $this->user_role,
-        // ]);
+        UserInformation::create([
+            'user_id' => $new_user->id
+        ]);
 
-        // UserInformation::create([
-        //     'user_id' => $new_user->id
-        // ]);
+        // ✅ Reset field
+        $this->reset(['user_name', 'user_email', 'user_role']);
 
-        // // ✅ Reset field
-        // $this->reset(['user_name', 'user_email', 'user_role']);
+        // ✅ Tutup modal
+        $this->user_modal = false;
 
-        // // ✅ Tutup modal
-        // $this->user_modal = false;
+        // ✅ Dispatch event
+        $this->dispatch('user-created');
 
-        // // ✅ Dispatch event
-        // $this->dispatch('user-created');
-
-        // // Dispatch Email
-        // Mail::to($new_user->email)->queue(new AccountCreated($new_user));
+        // Dispatch Email
+        Mail::to($new_user->email)->queue(new AccountCreated($new_user));
     }
 
     #[On('user-created')] 
