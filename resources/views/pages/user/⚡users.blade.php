@@ -4,8 +4,7 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\UserInformation;
 use Livewire\Attributes\On;
-use App\enum\UserRole; 
-use App\Mail\AccountCreated; 
+use App\enum\UserRole;
 use Illuminate\Validation\Rule;
 
 
@@ -70,9 +69,6 @@ new class extends Component
 
         // ✅ Dispatch event
         $this->dispatch('user-created');
-
-        // Dispatch Email
-        Mail::to($new_user->email)->queue(new AccountCreated($new_user));
     }
 
     #[On('user-created')] 
