@@ -119,7 +119,26 @@ new class extends Component
     @foreach($relawans as $user)
         <x-list-item :item="$user" :link="route('user.detail', $user->id)">
             <x-slot:avatar>
-                <img src="{{ asset('images/pic-default.jpg') }}" alt="" width="50" height="50" class="rounded-2xl">
+                @php
+                    // $user = auth()->user();
+                    $jpg = 'profile/' . $user->id . '.jpg';
+                    $png = 'profile/' . $user->id . '.png';
+                @endphp
+
+                <img 
+                src="{{ 
+                    Storage::disk('public')->exists($jpg) 
+                        ? asset('storage/'.$jpg) 
+                        : (Storage::disk('public')->exists($png) 
+                            ? asset('storage/'.$png) 
+                            : asset('images/ava-md.png')) 
+                }}" 
+                alt="Profile" 
+                height="50" 
+                width="50" 
+                class="rounded-2xl">
+
+                {{-- <img src="{{ asset('images/pic-default.jpg') }}" alt="" width="50" height="50" class="rounded-2xl"> --}}
             </x-slot:avatar>
             <x-slot:value>
                 <h2>{{ $user->name }} - ({{ $user->role->label() }})</h2>

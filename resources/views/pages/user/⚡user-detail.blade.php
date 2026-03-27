@@ -22,7 +22,7 @@ new class extends Component
         } elseif (Storage::disk('public')->exists($png)) {
             $this->profilePhoto = asset('storage/' . $png);
         } else {
-            $this->profilePhoto = asset('images/pic-default.jpg');
+            $this->profilePhoto = asset('images/ava-md.png');
         }
 
         $this->breadcrumbs = [
