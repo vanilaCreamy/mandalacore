@@ -24,12 +24,12 @@ new class extends Component
     public $driver_id;
 
     public $school_id;
+    public $address;
     public $amount_pk;
     public $amount_pb;
 
     public $latitude = null;
     public $longitude = null;
-    public $locationStatus = 'Belum terdeteksi';
 
     public function mount()
     {
@@ -41,7 +41,8 @@ new class extends Component
 
         $this->breadcrumbs = [
             ['icon' => 's-home', 'link' => route('dashboard')],
-            ['label' => 'Distribusi']
+            ['label' => 'Distribusi', 'link' => route('distribution.index')],
+            ['label' => 'Log Pengiriman Sekolah', ],
         ];
     }
 
@@ -118,6 +119,7 @@ new class extends Component
 
         $this->amount_pk = $smallFinal;
         $this->amount_pb = $bigFinal;
+        $this->address = $school->address;
     }
 
 
@@ -125,8 +127,6 @@ new class extends Component
     {
         $this->latitude = $lat;
         $this->longitude = $lng;
-
-        $this->locationStatus = 'Lokasi berhasil terdeteksi';
     }
 
     public function updateLiveLocation($lat, $lng)
@@ -223,12 +223,7 @@ new class extends Component
         ]);
 
         $this->loadLogs();
-
-        session()->flash('success', 'Log berhasil disimpan.');
-
-        $this->reset(['latitude','longitude']);
-
-        $this->locationStatus = 'Belum terdeteksi';
+        $this->reset(['latitude','longitude','address']);
     }
 }
 ?>
@@ -238,8 +233,7 @@ new class extends Component
     
     <x-header title="Input Log Distribusi Sekolah" subtitle="Catat aktivitas perjalanan distribusi" separator>
         <x-slot:actions>
-            <x-button link="{{ route('distribution.route-index') }}" label="Rute Distribusi" />
-            <x-button link="{{ route('distribution.log-index') }}" label="Pengiriman" class="btn-primary" />
+            <x-button link="{{ route('distribution.school-log-index') }}" label="Pengiriman" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
@@ -265,15 +259,27 @@ new class extends Component
             ]"
             inline
         />
-        <x-select
-            label="Sekolah"
-            wire:model.live="school_id"
-            :options="$schools"
-            option-label="school_name"
-            option-value="id"
-            placeholder="Pilih Sekolah"
-            :disabled="$this->isOnTrip()"
-        />
+        <div class="grid grid-cols-4 gap-1 items-center">
+            <x-select
+                label="Rute"
+                wire:model.live="school_id"
+                :options="$schools"
+                option-label="school_name"
+                option-value="id"
+                placeholder="Pilih Sekolah"
+                :disabled="$this->isOnTrip()"
+            />
+            <x-select
+                label="Sekolah"
+                wire:model.live="school_id"
+                :options="$schools"
+                option-label="school_name"
+                option-value="id"
+                placeholder="Pilih Sekolah"
+                :disabled="$this->isOnTrip()"
+            />
+        </div>
+        <x-textarea label="Alamat" wire:model="address" placeholder="..." rows="2" disabled />
         <div class="grid grid-cols-2 gap-1">
             <x-input
             label="Jumlah PK"
@@ -289,22 +295,6 @@ new class extends Component
 
         {{-- ================= GPS ================= --}}
         <x-card title="Lokasi GPS">
-            {{-- <div
-            x-data="{
-            loading:false,
-            getLocation(){
-            this.loading=true
-            navigator.geolocation.getCurrentPosition(
-            pos=>{
-            $wire.setLocation(pos.coords.latitude,pos.coords.longitude)
-            this.loading=false
-            },
-            ()=>{ alert('Gagal mendeteksi lokasi'); this.loading=false }
-            )
-            }
-            }"
-            class="space-y-2"
-            > --}}
             <div
             x-data="{
                 interval: null,
@@ -326,22 +316,6 @@ new class extends Component
             }"
             x-init="startTracking()"
             >
-                {{-- <x-button
-                    label="Ambil Lokasi"
-                    icon="o-map-pin"
-                    @click="getLocation()"
-                    spinner="setLocation"
-                />
-                <p class="text-xs text-gray-500">
-                    {{ $locationStatus }}
-                </p>
-                @if($latitude)
-                    <iframe
-                    class="w-full h-52 rounded-lg"
-                    loading="lazy"
-                    src="https://maps.google.com/maps?q={{ $latitude }},{{ $longitude }}&z=17&output=embed">
-                    </iframe>
-                @endif --}}
             </div>
         </x-card>
     </x-form>

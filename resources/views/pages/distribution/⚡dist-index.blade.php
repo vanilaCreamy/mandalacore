@@ -41,10 +41,16 @@ new class extends Component
     <x-breadcrumbs :items="$breadcrumbs" />
 
     
-    <x-header title="Dashboard Distribusi" subtitle="Monitoring distribusi makanan" separator>
+    <x-header title="Dashboard Distribusi" subtitle="Monitoring distribusi porsi MBG" separator>
         <x-slot:actions>
+            @if (Auth::user()->role->name == 'ASLAP')
             <x-button link="{{ route('distribution.driver-location') }}" label="Lokasi Driver" />
-            <x-button link="{{ route('distribution.log-index') }}" label="Pengiriman" class="btn-primary" />
+            <x-button link="{{ route('distribution.route-index') }}" label="Rute Distribusi" />
+            @endif
+            @if (Auth::user()->role->name == 'DISTRIBUSI')
+            <x-button link="{{ route('distribution.school-log-index') }}" label="Pengiriman Sekolah" class="btn-primary" />
+            {{-- <x-button link="{{ route('distribution.posyandu-log-index') }}" label="Pengiriman Posyandu" class="btn-primary" /> --}}
+            @endif
         </x-slot:actions>
     </x-header>
 

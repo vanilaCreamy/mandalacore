@@ -5,9 +5,12 @@ use App\Models\DistributionRoute;
 use App\Models\School;
 use App\Models\SchoolRoute;
 use App\Models\Posyandu;
+use App\Models\PosyanduRoute;
 
 new class extends Component
 {
+    public $breadcrumbs;
+
     public $routes;
     public $schools;
     public $posyandus;
@@ -15,7 +18,11 @@ new class extends Component
     public $isAddingSchool = false;
     public $isAddingPosyandu = false;
 
+    public $addSchoolModal = false;
+    public $addPosyanduModal = false;
 
+    public $availableSchools = [];
+    public $availablePosyandus = [];
 
     public $selectedRoute = null;
 
@@ -27,6 +34,31 @@ new class extends Component
         $this->routes = DistributionRoute::orderBy('route_name')->get();
         $this->schools = School::orderBy('school_name')->get();
         $this->posyandus = Posyandu::orderBy('posyandu_name')->get();
+
+        $this->breadcrumbs = [
+            ['icon' => 's-home', 'link' => route('dashboard')],
+            ['label' => 'Manajemen Distribusi', 'link' => route('distribution.index')],
+            ['label' => 'Rute Distribusi', 'link' => route('distribution.route-index')],
+            ['label' => 'Assign Item Route'],
+        ];
+    }
+
+    public function openAddSchoolModal()
+    {
+        $this->availableSchools = School::whereNotIn('id', $this->selectedSchools)
+            ->orderBy('school_name')
+            ->get();
+
+        $this->addSchoolModal = true;
+    }
+
+    public function openAddPosyanduModal()
+    {
+        $this->availablePosyandus = Posyandu::whereNotIn('id', $this->selectedPosyandus)
+            ->orderBy('posyandu_name')
+            ->get();
+
+        $this->addPosyanduModal = true;
     }
 
     public function toggleSortMode()
@@ -101,7 +133,7 @@ new class extends Component
 
         // Update database sesuai urutan baru
         foreach ($posyandus as $index => $posyanduId) {
-            \App\Models\PosyanduRoute::where('route_id', $this->selectedRoute)
+            PosyanduRoute::where('route_id', $this->selectedRoute)
                 ->where('posyandu_id', $posyanduId)
                 ->update([
                     'delivery_order' => $index + 1
@@ -124,8 +156,10 @@ new class extends Component
                 'delivery_order' => count($this->selectedSchools),
             ]);
 
-            $this->save();
+            $this->updatedSelectedRoute();
         }
+
+        $this->openAddSchoolModal();
     }
 
 
@@ -160,11 +194,89 @@ new class extends Component
 
         $this->save();
     }
+
+    public function addPosyandu($posyanduId)
+    {
+        if (!in_array($posyanduId, $this->selectedPosyandus)) {
+
+            $this->selectedPosyandus[] = $posyanduId;
+
+            PosyanduRoute::create([
+                'route_id' => $this->selectedRoute,
+                'posyandu_id' => $posyanduId,
+                'delivery_order' => count($this->selectedPosyandus),
+            ]);
+
+            $this->updatedSelectedRoute(); // refresh urutan
+        }
+
+        $this->openAddPosyanduModal(); // refresh isi modal
+    }
 };
 ?>
 
 <div class="max-w-6xl mx-auto">
 
+    <x-modal wire:model="addSchoolModal" title="Tambah Sekolah ke Rute">
+
+        <div class="space-y-2 max-h-[400px] overflow-y-auto">
+    
+            @foreach($availableSchools as $school)
+                <div class="p-3 border rounded-lg flex justify-between items-start">
+    
+                    <div>
+                        <div class="font-semibold">
+                            {{ $school->school_code }} — {{ $school->school_name }}
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ $school->address }}
+                        </div>
+                    </div>
+    
+                    <x-button
+                        label="Tambah"
+                        class="btn-sm btn-primary"
+                        wire:click="addSchool({{ $school->id }})"
+                    />
+    
+                </div>
+            @endforeach
+    
+        </div>
+    
+    </x-modal>
+    <x-modal wire:model="addPosyanduModal" title="Tambah Posyandu ke Rute">
+
+        <div class="space-y-2 max-h-[400px] overflow-y-auto">
+    
+            @foreach($availablePosyandus as $posyandu)
+                <div class="p-3 border rounded-lg flex justify-between items-start">
+    
+                    <div>
+                        <div class="font-semibold">
+                            {{ $posyandu->posyandu_code }} — {{ $posyandu->posyandu_name }}
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ $posyandu->address }}
+                        </div>
+                    </div>
+    
+                    <x-button
+                        label="Tambah"
+                        class="btn-sm btn-primary"
+                        wire:click="addPosyandu({{ $posyandu->id }})"
+                    />
+    
+                </div>
+            @endforeach
+    
+        </div>
+    
+    </x-modal>
+
+    {{-- BREADCRUMBS --}}
+    <x-breadcrumbs :items="$breadcrumbs" />
+        
     {{-- HEADER --}}
     <div class="mb-2 bg-white p-4 rounded-xl">
         <h1 class="text-2xl font-bold text-gray-800">
@@ -210,10 +322,11 @@ new class extends Component
                     Urutan Sekolah
                 </h2>
 
-                <button wire:click="$toggle('isAddingSchool')"
+                {{-- <button wire:click="$toggle('isAddingSchool')"
                     class="text-sm px-3 py-1 rounded-lg border bg-green-100">
                     Tambah Sekolah
-                </button>
+                </button> --}}
+                <x-button wire:click="openAddSchoolModal">Menu Sekolah</x-button>
             </div>
 
             {{-- LIST SEKOLAH --}}
@@ -289,10 +402,11 @@ new class extends Component
                     Urutan Posyandu
                 </h2>
 
-                <button wire:click="$toggle('isAddingPosyandu')"
+                {{-- <button wire:click="$toggle('isAddingPosyandu')"
                     class="text-sm px-3 py-1 rounded-lg border bg-green-100">
                     Tambah Posyandu
-                </button>
+                </button> --}}
+                <button wire:click="openAddPosyanduModal">
             </div>
 
             {{-- LIST POSYANDU --}}

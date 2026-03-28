@@ -4,6 +4,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Validate;
 use App\Models\DistributionRoute;
+use App\Models\Posyandu;
+use App\Models\School;
 
 new class extends Component
 {
@@ -42,6 +44,18 @@ new class extends Component
         $this->distribution_route_modal = false;
 
         $this->dispatch('notify', type: 'success', message: 'Rute berhasil dibuat');
+    }
+
+    public function toggleStatus($id)
+    {
+        $route = DistributionRoute::findOrFail($id);
+        $route->is_active = ! $route->is_active;
+        $route->save();
+
+        $this->dispatch('notify',
+            type: 'success',
+            message: 'Status rute diperbarui'
+        );
     }
 };
 ?>
@@ -93,8 +107,16 @@ new class extends Component
         <x-slot:actions>
 
             <x-button
+                icon="o-arrow-left"
+                label="Kembali"
+                class="btn-dash"
                 link="{{ route('distribution.index') }}"
-                label="Menu Distribusi"
+            />
+
+            <x-button
+                icon="o-map"
+                label="Assign Titik Rute"
+                link="{{ route('distribution.route-assign') }}"
             />
 
             <x-button
@@ -115,7 +137,7 @@ new class extends Component
 
             @foreach ($this->routes as $route)
 
-                <div class="flex items-center justify-between border rounded-lg p-2">
+                <div class="flex items-center justify-between border rounded-lg p-2 mb-2">
 
                     <div>
                         <div class="font-semibold">
@@ -125,26 +147,20 @@ new class extends Component
                         <div class="text-sm text-gray-500">
                             Route ID : {{ $route->id }}
                         </div>
+
+                    </div>
+
+                    <div class="text-sm text-gray-500">
+                        {{ $route->posyandus()->count() + $route->schools()->count() }} titik kirim
                     </div>
 
                     <div class="flex items-center gap-2">
-
-                        @if ($route->is_active)
-                            <x-badge value="Aktif" class="badge-success" />
-                        @else
-                            <x-badge value="Nonaktif" class="badge-ghost" />
-                        @endif
-
                         <x-button
-                            icon="o-eye"
-                            class="btn-sm btn-ghost"
+                            :icon="$route->is_active ? 'o-lock-open' : 'o-lock-closed'"
+                            :label="$route->is_active ? 'Aktif' : 'Nonaktif'"
+                            :class="$route->is_active ? 'btn-sm btn-primary btn-ghost' : 'btn-sm btn-secondary btn-ghost'"
+                            wire:click="toggleStatus({{ $route->id }})"
                         />
-
-                        <x-button
-                            icon="o-pencil"
-                            class="btn-sm btn-ghost"
-                        />
-
                     </div>
 
                 </div>
