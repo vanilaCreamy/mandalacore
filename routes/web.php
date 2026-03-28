@@ -69,7 +69,8 @@ Route::middleware(['auth'])->group(function () {
 
         });
         Route::middleware(['role:DISTRIBUSI'])->group(function () {
-            Route::livewire('/distribusi/log', 'pages::distribution.create-school-log')->name('distribution.school-log-index');
+            Route::livewire('/distribusi/log-sekolah', 'pages::distribution.create-school-log')->name('distribution.school-log-index');
+            Route::livewire('/distribusi/log-posyandu', 'pages::distribution.create-posyandu-log')->name('distribution.posyandu-log-index');
 
         });
     });

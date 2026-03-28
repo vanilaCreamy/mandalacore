@@ -3,8 +3,8 @@
 use Livewire\Component;
 use App\enum\DriverCategory;
 use App\enum\DriverFlow;
-use App\Models\SchoolDelivery;
-use App\Models\School;
+use App\Models\PosyanduDelivery;
+use App\Models\Posyandu;
 use App\Models\DriverLocation;
 use App\Models\DistributionRoute;
 use Illuminate\Support\Facades\Auth;
@@ -15,21 +15,20 @@ new class extends Component
     public $breadcrumbs;
 
     public $logs = [];
-    public $last_log;
 
-    public $schools;
-    public $distribution_route;
+    public $posyandus = [];
+    public $distribution_route = [];
     public $selected_route;
 
-    public $timestamp;
     public $category;
     public $flow;
     public $driver_id;
 
-    public $school_id;
+    public $posyandu_id;
     public $address;
-    public $amount_pk;
-    public $amount_pb;
+    public $amount_bumil;
+    public $amount_busui;
+    public $amount_balita;
 
     public $latitude = null;
     public $longitude = null;
@@ -38,49 +37,46 @@ new class extends Component
     {
         $this->driver_id = Auth::id();
 
-        $this->schools = School::orderBy('school_name')->get();
-
         $this->distribution_route = DistributionRoute::where('is_active', true)
             ->select('id', 'route_name')
             ->get()
             ->map(fn ($r) => [
                 'id' => $r->id,
                 'name' => $r->route_name,
-            ])
-            ->toArray();
-        
+            ])->toArray();
+
         $this->loadLogs();
 
         $this->breadcrumbs = [
             ['icon' => 's-home', 'link' => route('dashboard')],
             ['label' => 'Distribusi', 'link' => route('distribution.index')],
-            ['label' => 'Log Pengiriman Sekolah', ],
+            ['label' => 'Log Pengiriman Posyandu'],
         ];
     }
 
     private function latestLog()
     {
-        return SchoolDelivery::where('driver_id', $this->driver_id)
+        return PosyanduDelivery::where('driver_id', $this->driver_id)
             ->latest()
             ->first();
     }
 
     public function loadLogs()
     {
-        $this->logs = SchoolDelivery::with('school')
+        $this->logs = PosyanduDelivery::with('posyandu')
             ->where('driver_id', $this->driver_id)
             ->latest()
             ->get();
 
         $last = $this->latestLog();
-
-        if ($last?->flow?->name === 'DEPART') {
+        if ($last->flow->name === 'DEPART') {
             // isi ulang state form dari log terakhir
             $this->category = $last->category->name;
-            $this->school_id = $last->school_id;
+            $this->posyandu_id = $last->posyandu_id;
 
-            $this->amount_pk = $last->amount_pk;
-            $this->amount_pb = $last->amount_pb;
+            $this->amount_bumil = $last->amount_bumil;
+            $this->amount_busui = $last->amount_busui;
+            $this->amount_balita = $last->amount_balita;
         }
     }
 
@@ -94,9 +90,10 @@ new class extends Component
         ];
 
         if ($this->flow === DriverFlow::ARRIVE->name) {
-            $rules['school_id'] = 'required|exists:schools,id';
-            $rules['amount_pk'] = 'required|numeric|min:0';
-            $rules['amount_pb'] = 'required|numeric|min:0';
+            $rules['posyandu_id'] = 'required|exists:posyandu,id';
+            $rules['amount_bumil'] = 'required|numeric|min:0';
+            $rules['amount_busui'] = 'required|numeric|min:0';
+            $rules['amount_balita'] = 'required|numeric|min:0';
         }
 
         return $rules;
@@ -105,54 +102,41 @@ new class extends Component
     public function updatedSelectedRoute()
     {
         $this->reset([
-            'school_id',
+            'posyandu_id',
             'address',
-            'amount_pk',
-            'amount_pb',
+            'amount_bumil',
+            'amount_busui',
+            'amount_balita',
         ]);
 
-        $route = DistributionRoute::with('schools')
+        $route = DistributionRoute::with('posyandus')
             ->find($this->selected_route);
 
-        $this->schools = $route?->schools ?? [];
+        $this->posyandus = $route?->posyandus ?? [];
     }
 
-    public function updatedSchoolId($value)
+    public function updatedPosyanduId($value)
     {
-        $school = School::withSum('portions', 'small_portions')
-            ->withSum('portions', 'big_portions')
-            ->withSum('portions', 'teacher_portions')
-            ->withSum('portions', 'non_teacher_portions')
+        $posyandu = Posyandu::withSum('portions', 'bumil')
+            ->withSum('portions', 'busui')
+            ->withSum('portions', 'balita')
             ->find($value);
 
-        if (!$school){
+        if (!$posyandu) {
             $this->reset([
-                'school_id',
-                'amount_pk',
-                'amount_pb',
+                'posyandu_id',
+                'amount_bumil',
+                'amount_busui',
+                'amount_balita',
+                'address',
             ]);
             return;
         }
 
-        $teacher = $school->portions_sum_teacher_portions ?? 0;
-        $nonTeacher = $school->portions_sum_non_teacher_portions ?? 0;
-
-        $tambahan = $teacher + $nonTeacher;
-
-        $small = $school->portions_sum_small_portions ?? 0;
-        $big = $school->portions_sum_big_portions ?? 0;
-
-        if ($big != 0) {
-            $bigFinal = $big + $tambahan;
-            $smallFinal = $small;
-        } else {
-            $smallFinal = $small + $tambahan;
-            $bigFinal = $big;
-        }
-
-        $this->amount_pk = $smallFinal;
-        $this->amount_pb = $bigFinal;
-        $this->address = $school->address;
+        $this->amount_bumil = $posyandu->portions_sum_bumil ?? 0;
+        $this->amount_busui = $posyandu->portions_sum_busui ?? 0;
+        $this->amount_balita = $posyandu->portions_sum_balita ?? 0;
+        $this->address = $posyandu->address;
     }
 
     public function canDepart(): bool
@@ -190,56 +174,47 @@ new class extends Component
     public function berangkat()
     {
         if (!$this->canDepart()) {
-
             session()->flash('error', 'Anda belum melakukan tiba dari perjalanan sebelumnya.');
-
             return;
         }
 
         $this->flow = DriverFlow::DEPART->name;
-
         $this->saveDelivery();
     }
 
     public function tiba()
     {
         if (!$this->canArrive()) {
-
             session()->flash('error', 'Anda belum klik berangkat.');
-
             return;
         }
 
         $this->flow = DriverFlow::ARRIVE->name;
-
         $this->saveDelivery();
 
         $this->reset([
-            'school_id',
-            'amount_pk',
-            'amount_pb',
+            'posyandu_id',
+            'address',
+            'amount_bumil',
+            'amount_busui',
+            'amount_balita',
         ]);
     }
 
     private function saveDelivery()
     {
-        $this->timestamp = now();
         $this->validate();
 
-        SchoolDelivery::create([
-
-            'timestamp' => $this->timestamp,
-            'prev_log_id' => $this->last_log?->id,
+        PosyanduDelivery::create([
+            'timestamp' => now(),
+            'prev_log_id' => $this->latestLog()?->id,
             'category' => $this->category,
             'flow' => $this->flow,
-
-            'school_id' => $this->school_id,
-
-            'amount_pk' => $this->amount_pk,
-            'amount_pb' => $this->amount_pb,
-
+            'posyandu_id' => $this->posyandu_id,
+            'amount_bumil' => $this->amount_bumil,
+            'amount_busui' => $this->amount_busui,
+            'amount_balita' => $this->amount_balita,
             'driver_id' => $this->driver_id,
-
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
         ]);
@@ -252,9 +227,9 @@ new class extends Component
 <div>
     <x-breadcrumbs :items="$breadcrumbs" />
     
-    <x-header title="Input Log Distribusi Sekolah" subtitle="Catat aktivitas perjalanan distribusi" separator>
+    <x-header title="Input Log Distribusi Posyandu" subtitle="Catat aktivitas perjalanan distribusi" separator>
         <x-slot:actions>
-            <x-button link="{{ route('distribution.posyandu-log-index') }}" label="Pengiriman Posyandu" class="btn-primary" />
+            <x-button link="{{ route('distribution.school-log-index') }}" label="Pengiriman Sekolah" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
@@ -293,26 +268,32 @@ new class extends Component
             />
             <div class="col-span-3">
                 <x-select
-                    label="Sekolah"
-                    wire:model.live="school_id"
-                    :options="$this->schools"
-                    option-label="school_name"
+                    label="Posyandu"
+                    wire:model.live="posyandu_id"
+                    :options="$this->posyandus"
+                    option-label="posyandu_name"
                     option-value="id"
-                    placeholder="Pilih Sekolah"
+                    placeholder="Pilih Posyandu"
                     :disabled="$this->isOnTrip()"
                 />
             </div>
         </div>
         <x-textarea label="Alamat" wire:model="address" placeholder="..." rows="2" disabled />
-        <div class="grid grid-cols-2 gap-1">
+        <div class="grid grid-cols-3 gap-1">
             <x-input
-            label="Jumlah PK"
-            wire:model="amount_pk"
+            label="Jumlah BUMIL"
+            wire:model="amount_bumil"
             :disabled="$this->isOnTrip()"
             />
             <x-input
-            label="Jumlah PB"
-            wire:model="amount_pb"
+            label="Jumlah BUSUI"
+            wire:model="amount_busui"
+            :disabled="$this->isOnTrip()"
+            />
+
+            <x-input
+            label="Jumlah BALITA"
+            wire:model="amount_balita"
             :disabled="$this->isOnTrip()"
             />
         </div>
@@ -398,10 +379,13 @@ new class extends Component
                 <div class="flex items-center justify-between">
                     <div>
                         <h5 class="text-xs font-light">{{ Carbon::parse($log->timestamp)->translatedFormat('d M Y H:i') }}</h5>
-                        <h3 class="text-xl font-semibold">{{ $log->school->school_name ?? 'Perjalanan Dimulai' }}</h3>
+                        <h3 class="text-xl font-semibold">
+                            {{ $log->posyandu->posyandu_name ?? 'Perjalanan Dimulai' }}
+                        </h3>
                         <p>
-                            <span>Porsi PK: {{ $log->amount_pk }}</span>
-                            <span>Porsi Pb: {{ $log->amount_pb }}</span>
+                            <span>Porsi BUMIL: {{ $log->amount_bumil }}</span>
+                            <span>Porsi BUSUI: {{ $log->amount_busui }}</span>
+                            <span>Porsi BALITA: {{ $log->amount_balita }}</span>
                         </p>
                     </div>
                     <div>

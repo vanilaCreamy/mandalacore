@@ -21,7 +21,8 @@ class PosyanduDelivery extends Model
         'posyandu_id',
         'amount_bumil',
         'amount_busui',
-        'driver_balita',
+        'amount_balita',
+        'driver_id',
         'latitude',
         'longitude',
     ];
@@ -48,11 +49,11 @@ class PosyanduDelivery extends Model
 
     public function driver()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'driver_id', 'id');
     }
 
-    public function prevLog()
+    public function prev_log()
     {
-        return $this->belongsTo(SchoolDelivery::class, 'prev_log_id', 'id');
+        return $this->belongsTo(PosyanduDelivery::class, 'prev_log_id', 'id');
     }
 }

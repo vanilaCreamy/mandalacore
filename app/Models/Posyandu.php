@@ -24,4 +24,9 @@ class Posyandu extends Model
     public function portions(){
         return $this->hasMany(PosyanduPortion::class, 'posyandu_id', 'id');
     }
+
+    public function posyandu_logs()
+    {
+        return $this->hasMany(PosyanduDelivery::class);
+    }
 }
