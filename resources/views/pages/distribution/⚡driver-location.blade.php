@@ -59,7 +59,7 @@ new class extends Component
 </div>
 
 <script>
-    const map = L.map('map').setView([-6.2, 106.8], 12);
+    const map = L.map('map').setView([-7.3, 106.8], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
         .addTo(map);
