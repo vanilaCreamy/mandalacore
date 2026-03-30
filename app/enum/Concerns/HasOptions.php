@@ -8,8 +8,8 @@ trait HasOptions
     {
         return collect(self::cases())
             ->map(fn ($case) => [
-                'value' => $case->value,
-                'label' => $case->label(),
+                'id' => $case->value,
+                'name' => $case->label(),
             ])
             ->toArray();
     }

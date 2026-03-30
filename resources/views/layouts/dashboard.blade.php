@@ -77,6 +77,10 @@
                         <x-menu-item title="Kelola User" icon="o-users" link="{{ route('user.view') }}" route="user.view" />   
                     @endif
 
+                    @if (Auth::user()->role->name == 'PLOK')
+                        <x-menu-item title="Presensi Relawan" icon="o-users" link="{{ route('attendance.create') }}" route="attendance.create" />   
+                    @endif
+
                     @if (Auth::user()->role->name == 'ASLAP')
                         <x-menu-item title="Data Sekolah" icon="o-academic-cap" link="{{ route('school.index') }}" route="school.index" />   
                         <x-menu-item title="Data Posyandu" icon="o-squares-plus" link="{{ route('posyandu.index') }}" route="posyandu.index" /> 

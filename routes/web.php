@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 
@@ -43,6 +44,18 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['role:ADMIN'])->group(function () {
             Route::livewire('/users', 'pages::user.users')->name('user.view');
             Route::livewire('/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
+        });
+
+        Route::middleware(['role:PLOK'])->group(function () {
+            Route::livewire('attendance/create','pages::attendance.attendance-create')->name('attendance.create');
+            Route::get('/tz-test', function () {
+                DB::statement("SET time_zone = '+07:00'");
+            
+                return [
+                    'php_now' => now()->toDateTimeString(),
+                    'db_now' => DB::select("SELECT NOW() as now")[0]->now,
+                ];
+            });
         });
 
         Route::middleware(['role:ASLAP,DISTRIBUSI'])->group(function () {

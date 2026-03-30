@@ -47,4 +47,20 @@ enum UserRole: string
             self::PENCUCIAN => 'operational',
         };
     }
+
+    public function checkInTime()
+    {
+        return match ($this) {
+            self::ADMIN,
+            self::KEPALA,
+            self::PLOG,
+            self::PLOK,
+            self::ASLAP => '08:00:00',
+            self::PERSIAPAN => '18:00:00',
+            self::PENGOLAHAN => '23:00:00',
+            self::PEMORSIAN => '03:00:00',
+            self::DISTRIBUSI => '06:00:00',
+            self::PENCUCIAN => '12:00:00',
+        };
+    }
 }
