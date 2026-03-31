@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\enum\AttendanceStatus;
-use App\enum\UserRole;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 

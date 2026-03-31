@@ -26,4 +26,16 @@ enum AttendanceStatus: string
             self::ON_DUTY => 'Dinas Luar',
         };
     }
+
+    public function color(): string
+    {
+        return match($this) {
+            self::PRESENT => '!bg-green-300',
+            self::LATE => '!bg-lime-300',
+            self::EXCUSED => '!bg-amber-300',
+            self::SICK => '!bg-purple-300',
+            self::ABSENT => '!bg-red-300',
+            self::ON_DUTY => '!bg-green-300',
+        };
+    }
 }

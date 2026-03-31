@@ -48,15 +48,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware(['role:PLOK'])->group(function () {
             Route::livewire('attendance/create','pages::attendance.attendance-create')->name('attendance.create');
-            Route::get('/tz-test', function () {
-                DB::statement("SET time_zone = '+07:00'");
-            
-                return [
-                    'php_now' => now()->toDateTimeString(),
-                    'db_now' => DB::select("SELECT NOW() as now")[0]->now,
-                ];
-            });
         });
+
+        Route::middleware(['role:ASLAP,PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN'])->group(function () {
+            Route::livewire('/attendance/view','pages::attendance.attendance-index')->name('attendance.index');
+        });
+
 
         Route::middleware(['role:ASLAP,DISTRIBUSI'])->group(function () {
             Route::livewire('/distribusi', 'pages::distribution.dist-index')->name('distribution.index');

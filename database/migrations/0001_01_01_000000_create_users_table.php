@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', UserRole::cases());
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_coordinator')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

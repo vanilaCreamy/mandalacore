@@ -12,8 +12,14 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.1.0/styles/index.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.1.0/index.min.js"></script>
 
+        <script>
+            window.VanillaCalendar = window.VanillaCalendarPro.Calendar;
+        </script>
+
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
 
     </head>
@@ -86,6 +92,10 @@
                         <x-menu-item title="Data Posyandu" icon="o-squares-plus" link="{{ route('posyandu.index') }}" route="posyandu.index" /> 
                         <x-menu-separator /> 
                         <x-menu-item title="Manajemen Distribusi" icon="o-truck" link="{{ route('distribution.index') }}" route="distribution.index" />   
+                    @endif
+
+                    @if (in_array(Auth::user()->role->name, ['ASLAP','PERSIAPAN', 'PENGOLAHAN', 'PEMORSIAN','DISTRIBUSI', 'PENCUCIAN']))
+                        <x-menu-item title="Absensi" icon="o-calendar-days" link="{{ route('attendance.index') }}" route="attendance.index" />   
                     @endif
 
                     @if (Auth::user()->role->name == 'DISTRIBUSI')
