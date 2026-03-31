@@ -38,3 +38,12 @@ window.initVanillaCalendar = (events = []) => {
 
     calendarInstance.init();
 };
+
+// ✅ LISTEN HERE, NOT IN BLADE
+document.addEventListener('livewire:navigated', () => {
+    const el = document.querySelector('#calendar');
+    if (!el) return;
+
+    const events = JSON.parse(el.dataset.events || '[]');
+    initVanillaCalendar(events);
+});
