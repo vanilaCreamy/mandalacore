@@ -15,6 +15,7 @@ new class extends Component
 
     public $user_modal = false;
     public $edit_modal = false;
+    public $update_bank_modal = false;
 
     public $breadcrumbs = [];
     public $relawans = [];
@@ -24,6 +25,10 @@ new class extends Component
     public $user_name;
     public $user_email;
     public $user_role;
+
+    public $bank_name;
+    public $bank_account;
+    public $bank_owner_name;
 
     public function mount()
     {
@@ -94,8 +99,17 @@ new class extends Component
         $this->dispatch('user-created');
     }
 
+    public function open_create_modal()
+    {
+        $this->resetForm();
+
+        $this->user_modal = true;
+    }
+
     public function open_edit_modal($id)
     {
+        $this->resetForm();
+
         $user = User::findOrFail($id);
 
         $this->selected_user_id = $id;
@@ -104,6 +118,24 @@ new class extends Component
         $this->user_role  = $user->role;
 
         $this->edit_modal = true;
+    }
+
+    public function open_update_bank_modal($id)
+    {
+        $this->resetForm();
+
+        $user = User::findOrFail($id);
+        $bio = UserInformation::where('user_id', $id)->first();
+
+        $this->selected_user_id = $id;
+        $this->user_name  = $user->name;
+        $this->user_email = $user->email;
+
+        $this->bank_name = $bio->bank_name;
+        $this->bank_account = $bio->account_number;
+        $this->bank_owner_name = $bio->account_owner_name;
+
+        $this->update_bank_modal = true;
     }
 
     public function updateUser()
@@ -122,6 +154,19 @@ new class extends Component
 
         $this->resetForm();
         $this->dispatch('user-updated');
+    }
+
+    public function updateUserBankInformation()
+    {
+        $bio = UserInformation::where('user_id', $this->selected_user_id);
+
+        $bio->update([
+            'bank_name' => $this->bank_name,
+            'account_number' => $this->bank_account,
+            'account_owner_name' => $this->bank_owner_name,
+        ]);
+
+        $this->resetForm();
     }
 
     public function toggleStatus($id)
@@ -161,7 +206,11 @@ new class extends Component
             'user_role',
             'selected_user_id',
             'user_modal',
-            'edit_modal'
+            'edit_modal',
+            'update_bank_modal',
+            'bank_name',
+            'bank_account',
+            'bank_owner_name',
         ]);
     }
 };
@@ -194,6 +243,22 @@ new class extends Component
         </x-form>
     </x-modal>
 
+    <x-modal wire:model="update_bank_modal" title="Update Informasi Bank" class="backdrop-blur">
+        <x-form wire:submit.prevent="updateUserBankInformation">
+            <x-input label="Nama" wire:model="user_name" readonly  />
+            <x-input type="email" label="Email" wire:model="user_email" readonly  />
+
+            <x-input label="Nama Bank" wire:model="bank_name" placeholder="..." />
+            <x-input label="No Rekening" wire:model="bank_account" placeholder="..." />
+            <x-input label="Nama Pemilik Rekening" wire:model="bank_owner_name" placeholder="..." />
+    
+            <x-slot:actions>
+                <x-button label="Update" type="submit" class="btn-primary" spinner="updateUser" />
+                <x-button label="Cancel" @click="$wire.update_bank_modal = false" />
+            </x-slot:actions>
+        </x-form>
+    </x-modal>
+
     <x-breadcrumbs :items="$breadcrumbs" />
 
     <!-- Header -->
@@ -204,7 +269,7 @@ new class extends Component
             <x-stat title="Jumlah Akun" value="{{ count($relawans) }}" icon="o-users" color="text-primary" />
         </div>
         <div class="">
-            <x-button label="+ Tambah Pengguna" @click="$wire.user_modal = true" class="btn-primary" />
+            <x-button label="+ Tambah Pengguna" wire:click="open_create_modal" class="btn-primary" />
         </div>
     </div>
 
@@ -261,6 +326,12 @@ new class extends Component
                         title="Edit"
                         icon="o-pencil"
                         wire:click="open_edit_modal({{ $user->id }})"
+                    />
+
+                    <x-menu-item 
+                        title="Update Informasi Bank"
+                        icon="o-credit-card"
+                        wire:click="open_update_bank_modal({{ $user->id }})"
                     />
 
                     <x-menu-item 
