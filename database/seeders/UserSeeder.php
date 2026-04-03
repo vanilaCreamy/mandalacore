@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\enum\UserRole;
 use App\Models\User;
+use App\Models\UserInformation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -80,12 +81,16 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::create([
+            $new_user = User::create([
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'role' => $user['role'],
+            ]);
+
+            UserInformation::create([
+                'user_id' => $new_user->id,
             ]);
         }
     }
