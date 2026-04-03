@@ -204,9 +204,8 @@ new class extends Component
                 <ul class="text-sm grid grid-cols-1 gap-4">
                     <li>
                         <h5 class="text-slate-500 text-xs font-semibold">Nama Bank</h5>
-                        <div class=" flex items-center justify-between p-1 max-w-xl border border-slate-500 rounded-md">
-                            <span class="text-md">BANK REPUBLIK INDONESIA (BRI)</span>
-                            <img src="{{ asset('/images/logo_bri.png') }}" alt="" class="w-10">
+                        <div class=" p-1 max-w-xl border border-slate-500 rounded-md">
+                            <span class="text-md"> {{ $user_information->bank_name ?? '-' }}</span>
                         </div>
                     </li>
                     <li>
