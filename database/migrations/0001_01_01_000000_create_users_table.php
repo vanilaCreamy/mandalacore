@@ -3,6 +3,7 @@
 use App\enum\Gender;
 use App\enum\MarriedStatus;
 use App\enum\Religion;
+use App\Enum\ShirtSize;
 use App\enum\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -38,7 +39,7 @@ return new class extends Migration
             $table->string('place_of_birth', 100)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('phone_number', 100)->nullable();
-            $table->string('shirt_size', 100)->nullable();
+            $table->enum('shirt_size', ShirtSize::cases())->nullable();
             $table->enum('gender', Gender::cases())->nullable();
             $table->enum('religion', Religion::cases())->nullable();
             $table->enum('maried_status', MarriedStatus::cases())->nullable();

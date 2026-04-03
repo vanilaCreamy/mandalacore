@@ -2,11 +2,15 @@
 
 namespace App\enum;
 
-enum MarriedStatus
+use App\enum\Concerns\HasOptions;
+
+enum MarriedStatus: string
 {
-    case MARRIED;
-    case UNMARRIED;
-    case DIVORCE;
+    use HasOptions;
+
+    case MARRIED = 'MARRIED';
+    case UNMARRIED = 'UNMARRIED';
+    case DIVORCE = 'DIVORCE';
 
     public function label()
     {

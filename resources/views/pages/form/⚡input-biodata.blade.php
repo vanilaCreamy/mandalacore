@@ -6,11 +6,20 @@ use Illuminate\Support\Facades\Auth;
 use App\enum\Gender;
 use App\enum\Religion;
 use App\enum\MarriedStatus;
+use App\enum\EducationLevel;
+use App\enum\ShirtSize;
 
 
 new class extends Component
 {
     public $breadcrumbs =[];
+
+    // ENUM
+    public $enum_education_level; 
+    public $enum_gender; 
+    public $enum_maried_status; 
+    public $enum_religion;
+    public $enum_shirt_size;
 
     public $nik;
     public $nomor_kk;
@@ -36,6 +45,12 @@ new class extends Component
     {
         $biodata = UserInformation::where('user_id', Auth::id())->first();
 
+        $this->enum_education_level = EducationLevel::options();
+        $this->enum_gender = Gender::options();
+        $this->enum_maried_status = MarriedStatus::options(); 
+        $this->enum_religion = Religion::options();
+        $this->enum_shirt_size = ShirtSize::options();
+
         if ($biodata) {
             $this->fill($biodata->toArray());
             $this->isEdit = true;
@@ -52,13 +67,13 @@ new class extends Component
     {
         
         $this->validate([
-            'nik' => 'nullable|numeric|digits:16|unique:user_informations,nik,'. Auth::id(),
-            'nomor_kk' => 'nullable|numeric|digits:16',
+            'nik' => 'nullable|numeric',
+            'nomor_kk' => 'nullable|numeric',
             'fullname' => 'nullable|string|max:255',
             'education' => 'nullable|string',
             'place_of_birth' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'phone_number' => 'nullable|string|max:15',
+            'phone_number' => 'nullable|numeric|max:15',
             'gender' => 'nullable',
             'religion' => 'nullable',
             'maried_status' => 'nullable',
@@ -112,121 +127,40 @@ new class extends Component
         </div>
     @endif
 
-    <form wire:submit.prevent="save" class="grid grid-cols-2 gap-4">
-        <x-input label="NIK" wire:model="nik" placeholder="320..." icon="o-credit-card" hint="16 Digit Nomor Induk Kependudukan" />
-        <x-input label="Nomor kk" wire:model="nik" placeholder="320..." icon="o-credit-card" hint="Nomor Kartu Keluarga" />
-        <div class="col-span-2">
-            <x-input label="Nama Lengkap" wire:model="fullname" placeholder="..." icon="o-user" hint="Nama lengkap sesuai dengan yang ada pada ktp" />
-        </div>
-        <x-input label="Tempat Lahir" wire:model="place_of_birth" placeholder="..." icon="o-map-pin" />
-        <x-datetime label="Tanggal Lahir" wire:model="date_of_birth" icon="o-calendar-days" />
-    
-        <div>
-            <label>Tanggal Lahir</label>
-            <input type="date" wire:model="date_of_birth" class="w-full border rounded-lg p-2">
-            @error('date_of_birth') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>No HP</label>
-            <input type="text" wire:model="phone_number" class="w-full border rounded-lg p-2">
-            @error('phone_number') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Pendidikan</label>
-            <input type="text" wire:model="education" class="w-full border rounded-lg p-2">
-            @error('education') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Jenis Kelamin</label>
-            <select wire:model="gender" class="w-full border rounded-lg p-2">
-                <option value="">-- Pilih --</option>
-                @foreach (Gender::cases() as $item)
-                    <option value="{{ $item->name }}">{{ $item->label() }}</option>
-                @endforeach
-            </select>
-            @error('gender') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Agama</label>
-            <select wire:model="religion" class="w-full border rounded-lg p-2">
-                <option value="">-- Pilih --</option>
-                @foreach (Religion::cases() as $item)
-                    <option value="{{ $item->name }}">{{ $item->label() }}</option>
-                @endforeach
-            </select>
-            @error('religion') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Status Pernikahan</label>
-            <select wire:model="maried_status" class="w-full border rounded-lg p-2">
-                <option value="">-- Pilih --</option>
-                @foreach (MarriedStatus::cases() as $item)
-                    <option value="{{ $item->name }}">{{ $item->label() }}</option>
-                @endforeach
-            </select>
-            @error('maried_status') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Ukuran Baju</label>
-            <select wire:model="shirt_size" class="w-full border rounded-lg p-2">
-                <option value="">-- Pilih --</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-            </select>
-            @error('shirt_size') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div class="col-span-2">
-            <label>Alamat</label>
-            <textarea wire:model="address" class="w-full border rounded-lg p-2"></textarea>
-            @error('address') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Provinsi</label>
-            <input type="text" wire:model="province" class="w-full border rounded-lg p-2">
-            @error('province') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Kabupaten</label>
-            <input type="text" wire:model="regency" class="w-full border rounded-lg p-2">
-            @error('regency') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Kecamatan</label>
-            <input type="text" wire:model="subdistrict" class="w-full border rounded-lg p-2">
-            @error('subdistrict') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div>
-            <label>Desa</label>
-            <input type="text" wire:model="village" class="w-full border rounded-lg p-2">
-            @error('village') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+    <x-form wire:submit.prevent="save">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <x-input label="NIK" wire:model="nik" placeholder="320..." icon="o-credit-card" hint="16 Digit Nomor Induk Kependudukan" />
+            <x-input label="Nomor kk" wire:model="nomor_kk" placeholder="320..." icon="o-credit-card" hint="Nomor Kartu Keluarga" />
+            <div class="col-span-1 md:col-span-2">
+                <x-input label="Nama Lengkap" wire:model="fullname" placeholder="..." icon="o-user" hint="Nama lengkap sesuai dengan yang ada pada ktp" />
+            </div>
+            <x-input label="Tempat Lahir" wire:model="place_of_birth" placeholder="..." icon="o-map-pin" />
+            <x-datetime label="Tanggal Lahir" wire:model="date_of_birth" icon="o-calendar-days" />
+            <x-input label="Nomor Telepon" wire:model="phone_number" placeholder="" icon="o-phone" />
+
+            <x-select label="Pendidikan" wire:model="education" :options="$this->enum_education_level" placeholder="-- Pilih --" icon="o-user" />
+            <x-select label="Jenis Kelamin" wire:model="gender" :options="$this->enum_gender" placeholder="-- Pilih --" icon="o-user" />
+            <x-select label="Agama" wire:model="religion" :options="$this->enum_religion" placeholder="-- Pilih --" icon="o-user" />
+            <x-select label="Status Pernikahan" wire:model="maried_status" :options="$this->enum_maried_status" placeholder="-- Pilih --" icon="o-user" />
+            <x-select label="Ukuran Baju" wire:model="shirt_size" :options="$this->enum_shirt_size" placeholder="-- Pilih --" icon="o-user" />
+            
+            <div class="col-span-1 md:col-span-2">
+                <x-textarea label="Alamat" wire:model="address" placeholder="..." rows="3" />
+            </div>
+
+            <x-input label="Provinsi" wire:model="province" placeholder="" />
+            <x-input label="Kabupaten" wire:model="regency" placeholder="" />
+            <x-input label="Kecamatan" wire:model="subdistrict" placeholder="" />
+            <x-input label="Desa" wire:model="village" placeholder="" />
+
+            <x-datetime label="Tanggal Masuk" wire:model="joined_date" icon="o-calendar-days" />
         </div>
 
-        <div>
-            <label>Tanggal Masuk</label>
-            <input type="date" wire:model="joined_date" class="w-full border rounded-lg p-2">
-            @error('village') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-        </div>
-    
-        <div class="col-span-2">
-            <button type="submit"
-                class="w-full bg-blue-600 text-white py-2 rounded-lg">
-                Simpan
-            </button>
-        </div>
-    
-    </form>
+        <x-slot:actions>
+            <x-button label="Simpan" class="btn-primary" type="submit" spinner="save" />
+        </x-slot:actions>
+
+    </x-form>
     
 </div>

@@ -2,13 +2,17 @@
 
 namespace App\enum;
 
-enum Religion
+use App\enum\Concerns\HasOptions;
+
+enum Religion: string
 {
-    case ISLAM;
-    case CHRISTIAN;
-    case HINDU;
-    case BUDHA;
-    case KONGHUCU;
+    use HasOptions;
+
+    case ISLAM = 'ISLAM';
+    case CHRISTIAN = 'CHRISTIAN';
+    case HINDU = 'HINDU';
+    case BUDHA = 'BUDHA';
+    case KONGHUCU = 'KONGHUCU';
 
     public function label()
     {

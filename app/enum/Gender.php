@@ -2,10 +2,14 @@
 
 namespace App\enum;
 
-enum Gender
+use App\enum\Concerns\HasOptions;
+
+enum Gender: string
 {
-    case MALE;
-    case FEMALE;
+    use HasOptions;
+
+    case MALE = 'MALE';
+    case FEMALE = 'FEMALE';
 
     public function label()
     {
