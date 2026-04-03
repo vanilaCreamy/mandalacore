@@ -293,59 +293,57 @@ new class extends Component
                 </x-slot:sub-value>
 
                 <x-slot:actions>
-                    <div class="flex gap-2">
-                        @php $attendance = $worker->attendances->first(); @endphp
+                    <x-dropdown>
+                        <div class="flex flex-col gap-2">
+                            @php $attendance = $worker->attendances->first(); @endphp
 
-                        <x-button 
-                            label="Masuk"
-                            class="btn-success btn-sm"
-                            :disabled="$attendance?->first_check_in"
-                            wire:click="quickCheckIn({{ $worker->id }})"
-                        />
+                            <x-button 
+                                label="Masuk"
+                                class="btn-success btn-sm"
+                                :disabled="$attendance?->first_check_in"
+                                wire:click="quickCheckIn({{ $worker->id }})"
+                            />
 
-                        <x-button 
-                            label="Pulang"
-                            class="btn-warning btn-sm"
-                            :disabled="!$attendance?->first_check_in || $attendance?->last_check_out"
-                            wire:click="quickCheckOut({{ $worker->id }})"
-                        />
+                            <x-button 
+                                label="Pulang"
+                                class="btn-warning btn-sm"
+                                :disabled="!$attendance?->first_check_in || $attendance?->last_check_out"
+                                wire:click="quickCheckOut({{ $worker->id }})"
+                            />
 
-                        <x-dropdown label="Status" class="btn-primary btn-sm">
-                            <div class="flex flex-col gap-2">
-                                <x-button
-                                    label="Izin"
-                                    class="btn-info btn-sm"
-                                    wire:click="markStatus({{ $worker->id }}, 'EXCUSED')"
-                                />
+                            <x-button
+                                label="Izin"
+                                class="btn-info btn-sm"
+                                wire:click="markStatus({{ $worker->id }}, 'EXCUSED')"
+                            />
 
-                                <x-button
-                                    label="Sakit"
-                                    class="btn-secondary btn-sm"
-                                    wire:click="markStatus({{ $worker->id }}, 'SICK')"
-                                />
+                            <x-button
+                                label="Sakit"
+                                class="btn-secondary btn-sm"
+                                wire:click="markStatus({{ $worker->id }}, 'SICK')"
+                            />
 
-                                <x-button
-                                    label="Alpha"
-                                    class="btn-error btn-sm"
-                                    wire:click="markStatus({{ $worker->id }}, 'ABSENT')"
-                                />
-                            </div>
-                        </x-dropdown>
+                            <x-button
+                                label="Alpha"
+                                class="btn-error btn-sm"
+                                wire:click="markStatus({{ $worker->id }}, 'ABSENT')"
+                            />
 
-                        <x-button 
-                            icon="o-pencil-square"
-                            class="btn-ghost btn-sm"
-                            wire:click="open_attendance_modal({{ $worker->id }}, 'manual')"
-                        />
+                            <x-button 
+                                icon="o-pencil-square"
+                                class="btn-ghost btn-sm"
+                                wire:click="open_attendance_modal({{ $worker->id }}, 'manual')"
+                            />
 
-                        <x-button 
-                            icon="o-arrow-path"
-                            class="btn-ghost btn-sm text-red-500"
-                            wire:click="resetAttendance({{ $worker->id }})"
-                            wire:confirm="Yakin ingin menghapus presensi hari ini?"
-                        />
+                            <x-button 
+                                icon="o-arrow-path"
+                                class="btn-ghost btn-sm text-red-500"
+                                wire:click="resetAttendance({{ $worker->id }})"
+                                wire:confirm="Yakin ingin menghapus presensi hari ini?"
+                            />
 
-                    </div>
+                        </div>
+                    </x-dropdown>
                 </x-slot:actions>
             </x-list-item>
         @endforeach

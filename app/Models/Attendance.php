@@ -31,7 +31,7 @@ class Attendance extends Model
     {
         if (!$this->first_check_in) return;
 
-        $user = $this->user; // pakai relasi
+        $user = $this->user;
 
         $date = $this->date->toDateString();
 
@@ -45,11 +45,20 @@ class Attendance extends Model
         $this->late_minutes = max(0, $start->diffInMinutes($checkIn, false));
 
         if ($this->last_check_out) {
-            $this->work_minutes = $checkIn->diffInMinutes($this->last_check_out);
+
+            $checkOut = $this->last_check_out->copy();
+
+            // 🔥 jika checkout < checkin → tambah 1 hari
+            if ($checkOut->lt($checkIn)) {
+                $checkOut->addDay();
+            }
+
+            $this->work_minutes = $checkIn->diffInMinutes($checkOut);
         }
 
         $this->status = $this->resolveStatus();
     }
+
 
     private function resolveStatus(): AttendanceStatus
     {
