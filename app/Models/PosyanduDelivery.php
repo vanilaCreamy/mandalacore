@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\enum\DriverCategory;
-use App\enum\DriverFlow;
+
+use App\Enums\DriverCategory;
+use App\Enums\DriverFlow;
 use Illuminate\Database\Eloquent\Model;
 
 class PosyanduDelivery extends Model

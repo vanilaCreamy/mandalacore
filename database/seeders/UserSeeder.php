@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\enum\UserRole;
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\UserInformation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

@@ -85,6 +85,7 @@
 
                     @if (Auth::user()->role->name == 'PLOK')
                         <x-menu-item title="Presensi Relawan" icon="o-users" link="{{ route('attendance.create') }}" route="attendance.create" />   
+                        <x-menu-item title="Bahan Baku" icon="o-circle-stack" link="{{ route('material.index') }}" route="material.index" />   
                     @endif
 
                     @if (Auth::user()->role->name == 'ASLAP')

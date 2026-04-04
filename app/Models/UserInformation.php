@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\enum\Gender;
-use App\enum\MarriedStatus;
-use App\enum\Religion;
+use App\Enums\Gender;
+use App\Enums\MarriedStatus;
+use App\Enums\Religion;
 use Illuminate\Database\Eloquent\Model;
 
 class UserInformation extends Model

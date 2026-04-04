@@ -3,7 +3,7 @@
 use Livewire\Component;
 use App\Models\School;
 use App\Models\SchoolPortion;
-use App\enum\SchoolLevel;
+use App\Enums\SchoolLevel;
 
 new class extends Component
 {

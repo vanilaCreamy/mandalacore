@@ -1,8 +1,8 @@
 <?php
 
-namespace App\enum;
+namespace App\Enums;
 
-use App\enum\Concerns\HasOptions;
+use App\Enums\Concerns\HasOptions;
 
 enum AttendanceStatus: string
 {

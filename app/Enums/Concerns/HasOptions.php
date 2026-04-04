@@ -1,6 +1,6 @@
 <?php
 
-namespace App\enum\Concerns;
+namespace App\Enums\Concerns;
 
 trait HasOptions
 {

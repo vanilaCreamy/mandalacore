@@ -4,7 +4,7 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\UserInformation;
 use Livewire\Attributes\On;
-use App\enum\UserRole;
+use App\Enums\UserRole;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Mary\Traits\Toast;

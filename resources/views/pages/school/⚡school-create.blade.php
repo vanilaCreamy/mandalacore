@@ -2,7 +2,7 @@
 
 use Livewire\Component;
 use App\Models\School;
-use App\enum\SchoolLevel;
+use App\Enums\SchoolLevel;
 use Carbon\Carbon;
 
 new class extends Component

@@ -4,9 +4,9 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\Attendance;
 use App\Models\AttendanceLog;
-use App\enum\AttendanceStatus;
+use App\Enums\AttendanceStatus;
 use App\Services\AttendanceService;
-use App\enum\AttendanceType;
+use App\Enums\AttendanceType;
 use Carbon\Carbon;
 
 new class extends Component

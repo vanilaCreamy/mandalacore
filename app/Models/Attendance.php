@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\enum\AttendanceStatus;
+use App\Enums\AttendanceStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 

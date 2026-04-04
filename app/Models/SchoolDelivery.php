@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\enum\DriverCategory;
-use App\enum\DriverFlow;
+use App\Enums\DriverCategory;
+use App\Enums\DriverFlow;
 use App\Models\School;
 use Illuminate\Database\Eloquent\Model;
 

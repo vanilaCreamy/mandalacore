@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\enum\SchoolLevel;
+use App\Enums\SchoolLevel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

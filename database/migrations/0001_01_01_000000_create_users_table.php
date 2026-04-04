@@ -1,10 +1,10 @@
 <?php
 
-use App\enum\Gender;
-use App\enum\MarriedStatus;
-use App\enum\Religion;
-use App\Enum\ShirtSize;
-use App\enum\UserRole;
+use App\Enums\Gender;
+use App\Enums\MarriedStatus;
+use App\Enums\Religion;
+use App\Enums\ShirtSize;
+use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

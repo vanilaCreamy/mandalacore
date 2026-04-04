@@ -1,6 +1,6 @@
 <?php
 
-use App\enum\AttendanceStatus;
+use App\Enums\AttendanceStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

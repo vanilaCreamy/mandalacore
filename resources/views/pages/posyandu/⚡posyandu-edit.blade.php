@@ -2,7 +2,7 @@
 
 use Livewire\Component;
 use App\Models\Posyandu;
-use App\enum\PosyanduLevel;
+use App\Enums\PosyanduLevel;
 
 new class extends Component
 {

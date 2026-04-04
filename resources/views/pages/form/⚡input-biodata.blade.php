@@ -3,11 +3,11 @@
 use Livewire\Component;
 use App\Models\UserInformation;
 use Illuminate\Support\Facades\Auth;
-use App\enum\Gender;
-use App\enum\Religion;
-use App\enum\MarriedStatus;
-use App\enum\EducationLevel;
-use App\enum\ShirtSize;
+use App\Enums\Gender;
+use App\Enums\Religion;
+use App\Enums\MarriedStatus;
+use App\Enums\EducationLevel;
+use App\Enums\ShirtSize;
 
 
 new class extends Component
