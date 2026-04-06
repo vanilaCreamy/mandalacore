@@ -48,6 +48,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware(['role:PLOK'])->group(function () {
             Route::livewire('attendance/create','pages::attendance.attendance-create')->name('attendance.create');
+            
+            Route::livewire('material/index','pages::material.material-index')->name('material.index');
+            Route::livewire('category/index','pages::material.category-index')->name('category.index');
         });
 
         Route::middleware(['role:ASLAP,PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN'])->group(function () {
