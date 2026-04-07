@@ -113,7 +113,7 @@ new class extends Component
 
 
 <div>
-    <x-modal wire:model="material_modal" :title="$edit_id ? 'Edit Bahan Baku' : 'Buat Bahan Baku'" class="backdrop-blur">
+    <x-modal wire:model="material_modal" :title="$edit_id ? 'Edit Bahan Baku' : 'Buat Bahan Baku'" @close="$wire.resetForm()" class="backdrop-blur">
         <x-form wire:submit.prevent="save">
             <x-select
                 label="Kategori"

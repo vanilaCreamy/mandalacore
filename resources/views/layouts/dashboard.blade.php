@@ -19,6 +19,9 @@
             window.VanillaCalendar = window.VanillaCalendarPro.Calendar;
         </script>
 
+        {{--  Currency  --}}
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/robsontenorio/mary@2.7.0/libs/currency.js"></script>
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
 
@@ -81,6 +84,10 @@
                     
                     @if (Auth::user()->role->name == 'ADMIN')
                         <x-menu-item title="Kelola User" icon="o-users" link="{{ route('user.view') }}" route="user.view" />   
+                    @endif
+
+                    @if (Auth::user()->role->name == 'PLOG')
+                        <x-menu-item title="Menu" icon="o-clipboard-document-list" link="{{ route('menu.index') }}" route="menu.index" />   
                     @endif
 
                     @if (Auth::user()->role->name == 'PLOK')
