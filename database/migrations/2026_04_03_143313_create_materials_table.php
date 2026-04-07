@@ -25,19 +25,13 @@ return new class extends Migration
             $table->foreignId('material_category_id')->constrained('material_categories', 'id')->cascadeOnUpdate();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->string('base_unit')->default('gram');
+            $table->decimal('qty_gram', 15, 3)->default(0);
             $table->string('display_unit');
             $table->decimal('conversion', 10, 3);
             $table->enum('order_category', OrderCategory::cases());
             $table->timestamps();
         });
-        Schema::create('material_stocks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('material_id')->constrained('materials', 'id')->cascadeOnUpdate();
-            $table->decimal('qty_gram', 15, 3)->default(0);
-            $table->timestamps();
-        });
-        Schema::create('material_movements', function (Blueprint $table) {
+        Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('material_id')->constrained('materials', 'id')->cascadeOnUpdate();
             $table->enum('type', MaterialMovType::cases());
@@ -53,8 +47,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('material_movements');
-        Schema::dropIfExists('material_stocks');
+        Schema::dropIfExists('inventory_movements');
         Schema::dropIfExists('materials');
         Schema::dropIfExists('material_categories');
     }

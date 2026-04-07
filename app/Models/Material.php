@@ -11,7 +11,7 @@ class Material extends Model
         'material_category_id',
         'name',
         'description',
-        'base_unit',
+        'qty_gram',
         'display_unit',
         'conversion',
     ];
