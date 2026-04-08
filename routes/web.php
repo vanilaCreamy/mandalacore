@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 
+
 Route::middleware(['guest'])->group(function () {
-    Route::livewire('/', 'pages::main');
+    // redirect user to login because the landing page hasnt finished yet
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
+    // Route::livewire('/', 'pages::main');
     Route::livewire('/login', 'pages::login-page')->name('login');
 });
 
