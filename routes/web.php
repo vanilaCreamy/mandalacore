@@ -55,11 +55,15 @@ Route::middleware(['auth'])->group(function () {
             
             Route::livewire('material','pages::material.material-index')->name('material.index');
             Route::livewire('category','pages::material.category-index')->name('category.index');
+
+            Route::livewire('vendor', 'pages::material.vendor-index')->name('vendor.index');
         });
 
         Route::middleware(['role:PLOG'])->group(function () {
             Route::livewire('menu','pages::menus.menu-index')->name('menu.index');
             Route::livewire('menu/create','pages::menus.menu-create')->name('menu.create');
+
+            Route::livewire('menu/resep','pages::recipe.index')->name('recipe.index');
         });
 
         Route::middleware(['role:ASLAP,PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN'])->group(function () {

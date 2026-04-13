@@ -31,15 +31,6 @@ return new class extends Migration
             $table->enum('order_category', OrderCategory::cases());
             $table->timestamps();
         });
-        Schema::create('inventory_movements', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('material_id')->constrained('materials', 'id')->cascadeOnUpdate();
-            $table->enum('type', MaterialMovType::cases());
-            $table->decimal('qty_gram', 15, 3);
-            $table->nullableMorphs('reference');
-            $table->text('note')->nullable();
-            $table->timestamps();
-        });
     }
 
     /**
@@ -47,7 +38,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_movements');
+        // Schema::dropIfExists('inventory_movements');
         Schema::dropIfExists('materials');
         Schema::dropIfExists('material_categories');
     }

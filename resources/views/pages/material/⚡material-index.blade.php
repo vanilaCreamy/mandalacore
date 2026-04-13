@@ -140,6 +140,9 @@ new class extends Component
     <x-header title="Bahan Baku" subtitle="..." separator>
         <x-slot:actions>
             <x-button link="{{ route('category.index') }}" label="Kategori" />
+            <x-button link="{{ route('vendor.index') }}" label="Suplier" />
+            <x-button link="" label="Pemesanan" />
+            <x-button link="" label="Penyesuaian" />
             <x-button @click="$wire.material_modal = true" icon="o-plus" class="btn-primary" />
         </x-slot:actions>
     </x-header>
