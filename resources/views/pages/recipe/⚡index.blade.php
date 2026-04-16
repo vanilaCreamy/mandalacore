@@ -4,6 +4,8 @@ use Livewire\Component;
 use App\Models\Recipe;
 use App\Models\Material;
 use App\Models\RecipeMaterial;
+use App\Models\PortionBase;
+use App\Models\RecipePortionBase;
 
 new class extends Component
 {
@@ -18,6 +20,8 @@ new class extends Component
     public $materials = [];
     public $material_id;
     public $qty_gram;
+
+    public $portionMultipliers = [];
 
     protected function rules()
     {
@@ -78,11 +82,35 @@ new class extends Component
         $this->loadMaterials();
     }
 
+    public function saveMultipliers()
+    {
+        foreach ($this->portionMultipliers as $portionBaseId => $data) {
+            RecipePortionBase::updateOrCreate(
+                [
+                    'recipe_id' => $this->edit_id,
+                    'portion_base_id' => $portionBaseId,
+                ],
+                [
+                    'multiplier' => $data['multiplier'] ?? 1,
+                ]
+            );
+        }
+
+        $this->loadMaterials();
+    }
+
+
     public function loadMaterials()
     {
         $this->materials = RecipeMaterial::with('material')
             ->where('recipe_id', $this->edit_id)
             ->get();
+
+        $this->portionMultipliers = RecipePortionBase::with('portion_base')
+            ->where('recipe_id', $this->edit_id)
+            ->get()
+            ->keyBy('portion_base_id')
+            ->toArray();
     }
 
     public function addMaterial()
@@ -176,6 +204,37 @@ new class extends Component
                               class="btn-primary btn-sm" />
                 </div>
 
+                <div class="mt-6 border-t pt-4">
+                    <h3 class="font-semibold mb-2">Pengaturan Porsi Resep</h3>
+                
+                    <table class="table-auto w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Porsi</th>
+                                <th class="text-left">Multiplier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(PortionBase::all() as $pb)
+                                <tr>
+                                    <td>{{ $pb->name }} ({{ $pb->code }})</td>
+                                    <td>
+                                        <x-input type="number"
+                                                 step="0.01"
+                                                 wire:model="portionMultipliers.{{ $pb->id }}.multiplier"
+                                                 placeholder="1.00" />
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                
+                    <x-button label="Simpan Multiplier"
+                              wire:click="saveMultipliers"
+                              class="btn-primary btn-sm mt-2" />
+                </div>
+                
+
             </div>
         @endif
     </x-modal>
@@ -211,7 +270,7 @@ new class extends Component
                         <tr>
                             <th class="text-left">Bahan</th>
                             <th class="text-left">Gramasi</th>
-                            <th class="text-left">Gram / Porsi SD</th>
+                            <th class="text-left">Satuan</th>
                         </tr>
                     </thead>
                     <tbody>

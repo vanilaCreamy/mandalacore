@@ -5,6 +5,7 @@ use App\Models\Recipe;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuPortion;
+use App\Models\MenuExtraMaterial;
 use App\Models\PortionBase;
 use App\Models\Material;
 
@@ -12,30 +13,73 @@ new class extends Component
 {
     public $breadcrumbs;
 
+    public Menu $menu;
+
     public $name;
     public $date;
 
     public $selectedRecipes = [];
-
-    public $portions = []; // [portion_base_id => total]
-
+    public $portions = [];
     public $extraMaterials = [];
 
     public $extra_material_id;
     public $extra_qty_pk;
     public $extra_qty_pb;
 
-    public function mount()
+    public function mount(Menu $menu)
     {
+        $this->menu = $menu;
+
         $this->breadcrumbs = [
             ['icon' => 'o-home', 'link' => route('dashboard')],
             ['label' => 'Menu', 'link' => route('menu.index')],
-            ['label' => 'Buat Menu']
+            ['label' => 'Edit Menu']
         ];
 
-        // siapkan PK & PB
+        // === LOAD BASIC ===
+        $this->name = $menu->name;
+        $this->date = $menu->date;
+
+        // === LOAD RECIPES ===
+        $this->selectedRecipes = $menu->items()
+            ->pluck('recipe_id')
+            ->toArray();
+
+        // === INIT PORTIONS ===
         foreach (PortionBase::all() as $base) {
             $this->portions[$base->id] = 0;
+        }
+
+        foreach ($menu->portions as $portion) {
+            $this->portions[$portion->portion_base_id] = $portion->total_portions;
+        }
+
+        // === LOAD EXTRA MATERIALS ===
+        $pk = PortionBase::where('code', 'PK')->first();
+        $pb = PortionBase::where('code', 'PB')->first();
+
+        foreach ($menu->extraMaterials as $extra) {
+
+            $index = collect($this->extraMaterials)
+                ->search(fn($e) => $e['material_id'] == $extra->material_id);
+
+            if ($index === false) {
+                $this->extraMaterials[] = [
+                    'material_id' => $extra->material_id,
+                    'material_name' => $extra->material->name,
+                    'qty_pk' => 0,
+                    'qty_pb' => 0,
+                ];
+                $index = count($this->extraMaterials) - 1;
+            }
+
+            if ($extra->portion_base_id == $pk->id) {
+                $this->extraMaterials[$index]['qty_pk'] = $extra->qty_gram;
+            }
+
+            if ($extra->portion_base_id == $pb->id) {
+                $this->extraMaterials[$index]['qty_pb'] = $extra->qty_gram;
+            }
         }
     }
 
@@ -51,39 +95,37 @@ new class extends Component
 
     public function save()
     {
-        // dd(
-        //     ['recipe_id' => $this->selectedRecipes]
-        // );
         $this->validate([
             'name' => 'required',
             'date' => 'required|date',
             'selectedRecipes' => 'required|array|min:1',
         ]);
 
-        // === CREATE MENU ===
-        $menu = Menu::create([
+        // === UPDATE MENU ===
+        $this->menu->update([
             'name' => $this->name,
             'date' => $this->date,
         ]);
 
-        // === INSERT MENU ITEMS ===
+        // ❗ DELETE ALL RELATIONS FIRST
+        $this->menu->items()->delete();
+        $this->menu->portions()->delete();
+        $this->menu->extraMaterials()->delete();
+
+        // === INSERT BACK ===
         foreach ($this->selectedRecipes as $recipeId) {
             MenuItem::create([
-                'menu_id' => $menu->id,
+                'menu_id' => $this->menu->id,
                 'recipe_id' => (int) $recipeId,
             ]);
         }
 
-        // === INSERT MENU PORTIONS ===
         foreach ($this->portions as $portionBaseId => $total) {
-
-            $total = (int) $total;
-
-            if ($total > 0) {
+            if ((int)$total > 0) {
                 MenuPortion::create([
-                    'menu_id' => $menu->id,
+                    'menu_id' => $this->menu->id,
                     'portion_base_id' => (int) $portionBaseId,
-                    'total_portions' => $total,
+                    'total_portions' => (int)$total,
                 ]);
             }
         }
@@ -94,8 +136,8 @@ new class extends Component
         foreach ($this->extraMaterials as $extra) {
 
             if ($extra['qty_pk'] > 0) {
-                \App\Models\MenuExtraMaterial::create([
-                    'menu_id' => $menu->id,
+                MenuExtraMaterial::create([
+                    'menu_id' => $this->menu->id,
                     'material_id' => $extra['material_id'],
                     'portion_base_id' => $pk->id,
                     'qty_gram' => $extra['qty_pk'],
@@ -103,8 +145,8 @@ new class extends Component
             }
 
             if ($extra['qty_pb'] > 0) {
-                \App\Models\MenuExtraMaterial::create([
-                    'menu_id' => $menu->id,
+                MenuExtraMaterial::create([
+                    'menu_id' => $this->menu->id,
                     'material_id' => $extra['material_id'],
                     'portion_base_id' => $pb->id,
                     'qty_gram' => $extra['qty_pb'],
@@ -112,18 +154,11 @@ new class extends Component
             }
         }
 
-
         return redirect()->route('menu.index');
     }
 
     public function addExtraMaterial()
     {
-        $this->validate([
-            'extra_material_id' => 'required',
-            'extra_qty_pk' => 'nullable|numeric|min:0',
-            'extra_qty_pb' => 'nullable|numeric|min:0',
-        ]);
-
         $material = Material::find($this->extra_material_id);
 
         $this->extraMaterials[] = [
@@ -140,7 +175,6 @@ new class extends Component
     {
         unset($this->extraMaterials[$index]);
     }
-
 };
 ?>
 

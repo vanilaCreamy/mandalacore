@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Menu;
-use App\Models\Recipe;
 use Illuminate\Database\Eloquent\Model;
 
-class MenuItem extends Model
+class MenuPortion extends Model
 {
     protected $fillable = [
         'menu_id',
-        'recipe_id',
+        'portion_base_id',
+        'total_portions',
     ];
 
     public function menu()
@@ -18,8 +17,8 @@ class MenuItem extends Model
         return $this->belongsTo(Menu::class, 'menu_id', 'id');
     }
 
-    public function recipe()
+    public function portion_base()
     {
-        return $this->belongsTo(Recipe::class, 'recipe_id', 'id');
-    } 
+        return $this->belongsTo(PortionBase::class, 'portion_base_id', 'id');
+    }
 }

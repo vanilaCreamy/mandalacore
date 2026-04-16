@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use App\Models\User;
 use Database\Seeders\MaterialCategorySeeder;
 use Database\Seeders\MaterialSeeder;
+use Database\Seeders\PortionBaseSeeder;
 use Database\Seeders\PosyanduSeeder;
 use Database\Seeders\SchoolSeeder;
 use Database\Seeders\UserSeeder;
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             SchoolSeeder::class,
             PosyanduSeeder::class,
             MaterialCategorySeeder::class,
-            // MaterialSeeder::class,
+            MaterialSeeder::class,
+            PortionBaseSeeder::class
         ]);
     }
 }

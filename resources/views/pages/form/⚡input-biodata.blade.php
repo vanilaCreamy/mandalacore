@@ -73,7 +73,7 @@ new class extends Component
             'education' => 'nullable|string',
             'place_of_birth' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'phone_number' => 'nullable|numeric|max:15',
+            'phone_number' => 'nullable|numeric',
             'gender' => 'nullable',
             'religion' => 'nullable',
             'maried_status' => 'nullable',

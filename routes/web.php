@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['role:PLOG'])->group(function () {
             Route::livewire('menu','pages::menus.menu-index')->name('menu.index');
             Route::livewire('menu/create','pages::menus.menu-create')->name('menu.create');
+            Route::livewire('menu/{menu}/edit','pages::menus.menu-edit')->name('menu.edit');
 
             Route::livewire('menu/resep','pages::recipe.index')->name('recipe.index');
         });

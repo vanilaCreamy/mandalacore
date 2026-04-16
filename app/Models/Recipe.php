@@ -13,4 +13,9 @@ class Recipe extends Model
     {
         return $this->hasMany(RecipeMaterial::class, 'recipe_id', 'id');
     }
+
+    public function portionMultipliers()
+    {
+        return $this->hasMany(RecipePortionBase::class);
+    }
 }
