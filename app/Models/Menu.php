@@ -82,10 +82,12 @@ class Menu extends Model
                 $totalDisplayUnit = $totalGram / $material->conversion;
             
                 return [
+                    'material_id'   => $material->id,
                     'material_name'   => $material->name,
-                    'display_unit'    => $material->display_unit,
                     'total_gram'      => $totalGram,
+                    'display_unit'    => $material->display_unit,
                     'total_display'   => round($totalDisplayUnit, 2),
+                    'conversion'   => $material->conversion,
                 ];
             })
             ->filter()

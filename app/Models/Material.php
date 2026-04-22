@@ -14,6 +14,8 @@ class Material extends Model
         'qty_gram',
         'display_unit',
         'conversion',
+        'updated_price',
+        'order_category',
     ];
 
     protected $casts = [

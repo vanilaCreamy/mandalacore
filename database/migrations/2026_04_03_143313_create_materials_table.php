@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\MaterialMovType;
 use App\Enums\OrderCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -28,6 +27,7 @@ return new class extends Migration
             $table->decimal('qty_gram', 15, 3)->default(0);
             $table->string('display_unit');
             $table->decimal('conversion', 10, 3);
+            $table->decimal('updated_price', 15, 2)->default(0);
             $table->enum('order_category', OrderCategory::cases());
             $table->timestamps();
         });

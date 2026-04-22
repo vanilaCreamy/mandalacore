@@ -57,6 +57,20 @@ Route::middleware(['auth'])->group(function () {
             Route::livewire('category','pages::material.category-index')->name('category.index');
 
             Route::livewire('vendor', 'pages::material.vendor-index')->name('vendor.index');
+
+            Route::livewire('budget', 'pages::purchase.budget-plan-index')->name('budget.index');
+
+            Route::livewire('purchase', 'pages::purchase.purchase-index')->name('purchase.index');
+            Route::livewire('purchase/create', 'pages::purchase.purchase-create')->name('purchase.create');
+            Route::livewire('purchase/{po}/edit', 'pages::purchase.purchase-edit')->name('purchase.edit');
+            Route::livewire('purchase/{id}/po', 'pages::purchase.list-po')->name('purchase.po');
+            Route::get('purchase/{id}/print', function ($id) {
+                $plan = \App\Models\BudgetPlan::with([
+                    'purchaseOrders.items.material'
+                ])->findOrFail($id);
+
+                return view('pages.print.print-po', compact('plan'));
+            })->name('purchase.print');
         });
 
         Route::middleware(['role:PLOG'])->group(function () {

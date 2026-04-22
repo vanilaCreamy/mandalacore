@@ -3,6 +3,7 @@
 use Livewire\Component;
 use App\Models\Material;
 use App\Models\MaterialCategory;
+use App\Enums\OrderCategory;
 
 new class extends Component
 {
@@ -22,6 +23,8 @@ new class extends Component
     public $description;
     public $display_unit;
     public $conversion;
+    public $order_category;
+    public $updated_price;
 
 
     public function mount()
@@ -48,6 +51,8 @@ new class extends Component
             'description' => 'nullable',
             'display_unit' => 'required',
             'conversion' => 'required|numeric',
+            'order_category' => 'required',
+            'updated_price' => 'required|numeric',
         ];
     }
 
@@ -73,6 +78,8 @@ new class extends Component
             'description',
             'display_unit',
             'conversion',
+            'order_category',
+            'updated_price',
             'material_modal',
         ]);
     }
@@ -89,6 +96,8 @@ new class extends Component
                 'description' => $this->description,
                 'display_unit' => $this->display_unit,
                 'conversion' => $this->conversion,
+                'order_category' => $this->order_category,
+                'updated_price' => $this->updated_price,
             ]
         );
 
@@ -105,6 +114,8 @@ new class extends Component
         $this->description = $material->description;
         $this->display_unit = $material->display_unit;
         $this->conversion = $material->conversion;
+        $this->order_category = $material->order_category;
+        $this->updated_price = $material->updated_price;
 
         $this->material_modal = true;
     }
@@ -127,7 +138,8 @@ new class extends Component
                 <span class="col-span-4"><x-input label="Konversi" wire:model="conversion" /></span>
             </div>
             <x-textarea label="Deskripsi" wire:model="description" placeholder=""  rows="3" />
-    
+            <x-input label="Harga Terbaru" wire:model="updated_price" prefix="Rp" />
+            <x-select :options="OrderCategory::options()" wire:model="order_category" placeholder="~pilih kategori po~" />
             <x-slot:actions>
                 <x-button :label="$edit_id ? 'Update' : 'Tambah'" type="submit" class="btn-primary" spinner="save" />
                 <x-button label="Cancel" wire:click="resetForm" />
@@ -220,6 +232,15 @@ new class extends Component
                             </div>
                             <div class="text-lg font-semibold text-primary">
                                 0
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl px-4 py-3 text-center min-w-[80px]">
+                            <div class="text-[10px] uppercase tracking-wide text-slate-400">
+                                Harga Terbaru
+                            </div>
+                            <div class="text-lg font-semibold text-primary">
+                                Rp {{ number_format($material->updated_price, 2, ',', '.') }}
                             </div>
                         </div>
         
