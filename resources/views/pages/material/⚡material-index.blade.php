@@ -231,7 +231,7 @@ new class extends Component
                                 Stok
                             </div>
                             <div class="text-lg font-semibold text-primary">
-                                0
+                                {{ $material->qty_gram / $material->conversion }} {{ $material->display_unit }}
                             </div>
                         </div>
 

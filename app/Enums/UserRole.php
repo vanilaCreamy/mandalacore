@@ -55,7 +55,7 @@ enum UserRole: string
             self::KEPALA,
             self::PLOG,
             self::PLOK,
-            self::ASLAP => '08:00:00',
+            self::ASLAP => '06:00:00',
             self::PERSIAPAN => '18:00:00',
             self::PENGOLAHAN => '23:00:00',
             self::PEMORSIAN => '03:00:00',

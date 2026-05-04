@@ -71,6 +71,9 @@ Route::middleware(['auth'])->group(function () {
 
                 return view('pages.print.print-po', compact('plan'));
             })->name('purchase.print');
+
+            Route::livewire('purchase/{id}/receive', 'pages::purchase.good-receipt')->name('purchase.receive');
+
         });
 
         Route::middleware(['role:PLOG'])->group(function () {

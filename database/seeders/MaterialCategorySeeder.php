@@ -15,41 +15,77 @@ class MaterialCategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Karbohidrat',
-                'abbr' => 'CHO',
-                'description' => 'Sumber utama energi dari bahan pangan seperti beras, jagung, gandum, dan umbi-umbian.'
+                'name' => 'Karbohidrat Utama',
+                'abbr' => 'KBU',
+                'description' => 'Sumber karbohidrat utama sebagai makanan pokok seperti beras, mie, kentang, jagung, dan turunannya.'
             ],
             [
-                'name' => 'Protein Hewani',
-                'abbr' => 'PH',
-                'description' => 'Sumber protein yang berasal dari hewan seperti daging, ayam, ikan, telur, dan hasil laut.'
+                'name' => 'Lauk Hewani Segar',
+                'abbr' => 'LHS',
+                'description' => 'Bahan lauk hewani dalam kondisi segar seperti daging, ayam, ikan, dan hasil laut yang belum diolah.'
             ],
             [
-                'name' => 'Protein Nabati',
-                'abbr' => 'PN',
-                'description' => 'Sumber protein yang berasal dari tumbuhan seperti kacang-kacangan, tahu, tempe, dan biji-bijian.'
+                'name' => 'Lauk Nabati Segar',
+                'abbr' => 'LNS',
+                'description' => 'Bahan lauk nabati segar seperti tempe, tahu, dan bahan protein nabati lain yang belum diproses lanjut.'
             ],
             [
-                'name' => 'Sayur',
-                'abbr' => 'SYR',
-                'description' => 'Kelompok bahan pangan berupa sayuran segar yang kaya serat, vitamin, dan mineral.'
+                'name' => 'Sayur Segar',
+                'abbr' => 'SYS',
+                'description' => 'Berbagai jenis sayuran segar yang digunakan sebagai bahan masakan harian.'
             ],
             [
-                'name' => 'Buah',
-                'abbr' => 'BUH',
-                'description' => 'Kelompok bahan pangan berupa buah-buahan yang mengandung vitamin, mineral, dan antioksidan.'
+                'name' => 'Buah Segar',
+                'abbr' => 'BGS',
+                'description' => 'Buah-buahan segar yang disajikan langsung atau sebagai pelengkap menu.'
             ],
             [
-                'name' => 'Bumbu',
-                'abbr' => 'BMB',
-                'description' => 'Bahan pelengkap masakan yang digunakan untuk memberikan rasa dan aroma pada makanan.'
+                'name' => 'Telur',
+                'abbr' => 'TLR',
+                'description' => 'Telur ayam, bebek, dan sejenisnya yang digunakan sebagai lauk atau bahan masakan.'
             ],
             [
-                'name' => 'Susu',
-                'abbr' => 'SUS',
-                'description' => 'Produk berbasis susu yang menjadi sumber kalsium, protein, dan nutrisi penting lainnya.'
+                'name' => 'Produk Kedelai',
+                'abbr' => 'PKD',
+                'description' => 'Produk berbahan dasar kedelai seperti tahu, tempe, susu kedelai, dan turunannya.'
+            ],
+            [
+                'name' => 'Bumbu Basah',
+                'abbr' => 'BBA',
+                'description' => 'Bumbu dengan kadar air tinggi seperti bawang, cabai, jahe, lengkuas, kunyit, dan sejenisnya.'
+            ],
+            [
+                'name' => 'Bumbu Kering & Seasoning',
+                'abbr' => 'BKS',
+                'description' => 'Bumbu kering dan penyedap seperti garam, gula, merica, kaldu bubuk, dan rempah kering.'
+            ],
+            [
+                'name' => 'Bahan Kering Produksi',
+                'abbr' => 'BKP',
+                'description' => 'Bahan kering pendukung produksi seperti tepung, maizena, tapioka, dan bahan pengental lainnya.'
+            ],
+            [
+                'name' => 'Minyak & Lemak',
+                'abbr' => 'MDL',
+                'description' => 'Minyak goreng, margarin, mentega, dan sumber lemak lainnya untuk proses memasak.'
+            ],
+            [
+                'name' => 'Produk Olahan Jadi',
+                'abbr' => 'POJ',
+                'description' => 'Produk yang sudah diolah dan siap pakai seperti sosis, nugget, bakso, dan makanan olahan lainnya.'
+            ],
+            [
+                'name' => 'Santan & Produk Turunan Kelapa',
+                'abbr' => 'STK',
+                'description' => 'Santan, kelapa parut, dan bahan lain berbasis kelapa untuk kebutuhan masakan.'
+            ],
+            [
+                'name' => 'Susu & Produk Susu',
+                'abbr' => 'SPS',
+                'description' => 'Susu cair, susu bubuk, keju, kental manis, dan produk turunan susu lainnya.'
             ],
         ];
+
 
         foreach ($categories as $cat) {
             MaterialCategory::create([

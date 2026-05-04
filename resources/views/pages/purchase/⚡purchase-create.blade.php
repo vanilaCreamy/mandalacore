@@ -63,6 +63,7 @@ new class extends Component
         $material = Material::find($this->material_id);
         if ($material) {
             $this->display_unit = $material->display_unit;
+            $this->price = $material->updated_price ?? 0;
         } else {
             $this->display_unit = "...";
         }

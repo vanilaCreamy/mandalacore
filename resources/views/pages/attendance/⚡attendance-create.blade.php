@@ -45,7 +45,7 @@ new class extends Component
     public function loadWorkers()
     {
         $this->workers = User::whereIn('role', [
-                'PERSIAPAN','PENGOLAHAN','PEMORSIAN','DISTRIBUSI','PENCUCIAN'
+                'ASLAP', 'PERSIAPAN','PENGOLAHAN','PEMORSIAN','DISTRIBUSI','PENCUCIAN'
             ])
             ->with(['attendances' => function ($q) {
                 $q->whereDate('date', $this->selected_date);

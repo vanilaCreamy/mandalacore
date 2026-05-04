@@ -224,6 +224,7 @@ new class extends Component
                                     <x-button label="Lihat PO" icon="o-eye" wire:click="openPoModal({{ $po->id }})" />
                                     {{-- Edit --}}
                                     <x-button label="Edit" icon="o-pencil" link="{{ route('purchase.edit', $po->id) }}" />
+                                    <x-button label="Terima" icon="o-check" link="{{ route('purchase.receive', $po->id) }}" />
                                 </div>
 
                             </div>
