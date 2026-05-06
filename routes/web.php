@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
             ->middleware(['role:ADMIN,KEPALA,PLOK,PLOG,ASLAP'])
             ->name('dashboard.management');
         Route::livewire('/dashboard/operational', 'pages::dashboard.operational-dashboard')
-            ->middleware(['role:PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN'])
+            ->middleware(['role:PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN,KEAMANAN,KEBERSIHAN'])
             ->name('dashboard.operational');
 
         Route::livewire('/biodata', 'pages::biodata')->name('biodata');
