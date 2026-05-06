@@ -14,6 +14,8 @@ enum UserRole: string
     case PEMORSIAN = "PEMORSIAN";
     case DISTRIBUSI = "DISTRIBUSI";
     case PENCUCIAN = "PENCUCIAN";
+    case KEAMANAN = "KEAMANAN";
+    case KEBERSIHAN = "KEBERSIHAN";
 
     public function label()
     {
@@ -28,6 +30,8 @@ enum UserRole: string
             self::PEMORSIAN => 'Pemorsian',
             self::DISTRIBUSI => 'Distribusi',
             self::PENCUCIAN => 'Pencucian',
+            self::KEAMANAN => 'Petugas Keamanan',
+            self::KEBERSIHAN => 'Petugas Kebersihan',
         };
     }
 
@@ -44,23 +48,56 @@ enum UserRole: string
             self::PENGOLAHAN,
             self::PEMORSIAN,
             self::DISTRIBUSI,
-            self::PENCUCIAN => 'operational',
+            self::PENCUCIAN,
+            self::KEAMANAN,
+            self::KEBERSIHAN => 'operational',
         };
     }
 
-    public function checkInTime()
+    public function schedules(): array
     {
         return match ($this) {
             self::ADMIN,
             self::KEPALA,
             self::PLOG,
-            self::PLOK,
-            self::ASLAP => '06:00:00',
-            self::PERSIAPAN => '18:00:00',
-            self::PENGOLAHAN => '23:00:00',
-            self::PEMORSIAN => '03:00:00',
-            self::DISTRIBUSI => '06:00:00',
-            self::PENCUCIAN => '12:00:00',
+            self::PLOK => [
+                ['start' => '08:00:00', 'end' => '16:00:00'],
+            ],
+            self::ASLAP => [
+                ['start' => '06:00:00', 'end' => '18:00:00'],
+                ['start' => '18:00:00', 'end' => '06:00:00'],
+            ],
+
+            self::PERSIAPAN => [
+                ['start' => '18:00:00', 'end' => '02:00:00'],
+            ],
+
+            self::PENGOLAHAN => [
+                ['start' => '23:00:00', 'end' => '07:00:00'],
+            ],
+
+            self::PEMORSIAN => [
+                ['start' => '03:00:00', 'end' => '11:00:00'],
+            ],
+
+            self::DISTRIBUSI => [
+                ['start' => '06:00:00', 'end' => '14:00:00'],
+            ],
+
+            self::PENCUCIAN => [
+                ['start' => '12:00:00', 'end' => '20:00:00'],
+            ],
+
+            // 🔥 KEAMANAN 2 SHIFT
+            self::KEAMANAN => [
+                ['start' => '06:00:00', 'end' => '18:00:00'], // siang
+                ['start' => '18:00:00', 'end' => '06:00:00'], // malam
+            ],
+
+            // 🔥 KEBERSIHAN 2 SESI
+            self::KEBERSIHAN => [
+                ['start' => '06:00:00', 'end' => '18:00:00'], // 2 sesi
+            ],
         };
     }
 }

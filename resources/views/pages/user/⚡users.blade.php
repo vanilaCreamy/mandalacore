@@ -45,20 +45,26 @@ new class extends Component
     #[On('user-status-changed')]
     public function loadRelawan()
     {
+        if (Auth::user()->role->name === "ADMIN") {
+
+            $roles = [
+                'ADMIN','KEPALA','PLOG','PLOK',
+                'ASLAP','PERSIAPAN','PENGOLAHAN',
+                'PEMORSIAN','DISTRIBUSI','PENCUCIAN','KEAMANAN','KEBERSIHAN'
+            ];
+
+        } else {
+
+            $roles = [
+                'ASLAP','PERSIAPAN','PENGOLAHAN',
+                'PEMORSIAN','DISTRIBUSI','PENCUCIAN','KEAMANAN','KEBERSIHAN'
+            ];
+        }
+
         $this->relawans = User::select('id','name','email','role','is_active')
+            ->whereIn('role', $roles)   // 🔥 INI YANG HILANG
             ->orderByRaw("
-                FIELD(role,
-                    'ADMIN',
-                    'KEPALA',
-                    'PLOG',
-                    'PLOK',
-                    'ASLAP',
-                    'PERSIAPAN',
-                    'PENGOLAHAN',
-                    'PEMORSIAN',
-                    'DISTRIBUSI',
-                    'PENCUCIAN'
-                )
+                FIELD(role, '".implode("','",$roles)."')
             ")
             ->get();
     }
@@ -217,18 +223,20 @@ new class extends Component
 ?>
 
 <div>
-    <x-modal wire:model="user_modal" title="Buat Akun Baru" class="backdrop-blur">
-        <x-form wire:submit.prevent="save">
-            <x-input label="Nama" wire:model="user_name" />
-            <x-input type="email" label="Email" wire:model="user_email" />
-            <x-select label="Role" wire:model="user_role" :options="$this->userRoleOptions" />
-    
-            <x-slot:actions>
-                <x-button label="Tambah" type="submit" class="btn-primary" spinner="save" />
-                <x-button label="Cancel" @click="$wire.user_modal = false" />
-            </x-slot:actions>
-        </x-form>
-    </x-modal>
+    @if (Auth::user()->role->name == "ADMIN")
+        <x-modal wire:model="user_modal" title="Buat Akun Baru" class="backdrop-blur">
+            <x-form wire:submit.prevent="save">
+                <x-input label="Nama" wire:model="user_name" />
+                <x-input type="email" label="Email" wire:model="user_email" />
+                <x-select label="Role" wire:model="user_role" :options="$this->userRoleOptions" />
+        
+                <x-slot:actions>
+                    <x-button label="Tambah" type="submit" class="btn-primary" spinner="save" />
+                    <x-button label="Cancel" @click="$wire.user_modal = false" />
+                </x-slot:actions>
+            </x-form>
+        </x-modal>
+    @endif
 
     <x-modal wire:model="edit_modal" title="Edit Akun" class="backdrop-blur">
         <x-form wire:submit.prevent="updateUser">
@@ -242,6 +250,7 @@ new class extends Component
             </x-slot:actions>
         </x-form>
     </x-modal>
+    
 
     <x-modal wire:model="update_bank_modal" title="Update Informasi Bank" class="backdrop-blur">
         <x-form wire:submit.prevent="updateUserBankInformation">
@@ -268,9 +277,16 @@ new class extends Component
         <div class="">
             <x-stat title="Jumlah Akun" value="{{ count($relawans) }}" icon="o-users" color="text-primary" />
         </div>
-        <div class="">
-            <x-button label="+ Tambah Pengguna" wire:click="open_create_modal" class="btn-primary" />
-        </div>
+        @if (Auth::user()->role->name == "ADMIN")
+            <div class="">
+                <x-button label="+ Tambah Pengguna" wire:click="open_create_modal" class="btn-primary" />
+            </div>
+        @endif
+        @if (Auth::user()->role->name == "PLOK")
+            <div class="">
+                <x-button label="Presensi" link="{{ route('attendance.create') }}" class="btn-primary" />
+            </div>
+        @endif
     </div>
 
     @foreach($relawans as $user)

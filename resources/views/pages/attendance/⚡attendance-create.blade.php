@@ -14,15 +14,20 @@ new class extends Component
     public $breadcrumbs;
     public $selected_date;
 
+    public $workers_options;
+
     public $workers;
     public $selected_worker;
     public $attendance_modal;
+    public $multiple_modal;
 
     // attendance
     public $event_time;
     public $mode; // checkin / checkout / manual
     public $manual_check_in;
     public $manual_check_out;
+
+    public $users_multi_ids = [];
 
     public function mount()
     {
@@ -31,6 +36,18 @@ new class extends Component
         $this->selected_date = $today->toDateString();
         $this->date = $this->selected_date;
 
+        $this->workers_options = User::whereIn('role', [
+                'ASLAP', 'PERSIAPAN','PENGOLAHAN','PEMORSIAN','DISTRIBUSI','PENCUCIAN','KEAMANAN','KEBERSIHAN'
+            ])
+            ->orderBy('role')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name . ' - ' . $user->role->label(),
+                ];
+            });
+
         // default waktu sekarang (dipakai saat buka modal)
         $this->event_time = now()->format('H:i');
 
@@ -38,6 +55,7 @@ new class extends Component
 
         $this->breadcrumbs = [
             ['icon' => 'o-home', 'link' => route('dashboard')],
+            ['label' => 'Relawan', 'link' => route('user.view')],
             ['label' => 'Presensi Relawan'],
         ];
     }
@@ -45,7 +63,7 @@ new class extends Component
     public function loadWorkers()
     {
         $this->workers = User::whereIn('role', [
-                'ASLAP', 'PERSIAPAN','PENGOLAHAN','PEMORSIAN','DISTRIBUSI','PENCUCIAN'
+                'ASLAP', 'PERSIAPAN','PENGOLAHAN','PEMORSIAN','DISTRIBUSI','PENCUCIAN','KEAMANAN','KEBERSIHAN'
             ])
             ->with(['attendances' => function ($q) {
                 $q->whereDate('date', $this->selected_date);
@@ -181,10 +199,44 @@ new class extends Component
         $this->loadWorkers();
     }
 
+    public function save_multiple()
+    {
+        foreach ($this->users_multi_ids as $userId) {
+            $attendance = Attendance::firstOrCreate(
+                [
+                    'user_id' => $userId,
+                    'date' => $this->selected_date
+                ],
+                [
+                    'recorded_by' => auth()->id()
+                ]
+            );
+
+            if ($this->manual_check_in) {
+                $attendance->first_check_in = Carbon::parse(
+                    $this->selected_date.' '.$this->manual_check_in
+                );
+            }
+
+            if ($this->manual_check_out) {
+                $attendance->last_check_out = Carbon::parse(
+                    $this->selected_date.' '.$this->manual_check_out
+                );
+            }
+
+            $attendance->calculate();
+            $attendance->save();
+        }
+
+        $this->multiple_modal = false;
+        $this->loadWorkers();
+    }
+
 };
 ?>
 
 <div>
+    {{-- Single Attendance Modal --}}
     <x-modal wire:model="attendance_modal" title="Koreksi Presensi Relawan" class="backdrop-blur">
         <x-form wire:submit.prevent="save">
     
@@ -227,6 +279,46 @@ new class extends Component
     
         </x-form>
     </x-modal>
+
+    {{-- Multiple Attendance Modal --}}
+    <x-modal wire:model="multiple_modal" title="Koreksi Presensi Relawan" class="backdrop-blur">
+        <x-form wire:submit.prevent="save_multiple">
+
+            
+            <div class="space-y-5">
+                <x-choices label="Multiple" wire:model="users_multi_ids" :options="$workers_options" clearable />
+    
+                <div class="grid grid-cols-2 gap-4">
+                    <x-datetime 
+                        label="Jam Masuk"
+                        type="time"
+                        wire:model="manual_check_in"
+                    />
+    
+                    <x-datetime 
+                        label="Jam Pulang"
+                        type="time"
+                        wire:model="manual_check_out"
+                    />
+                </div>
+    
+                <div class="text-xs text-gray-500">
+                    Tanggal presensi: <b>{{ \Carbon\Carbon::parse($selected_date)->format('d M Y') }}</b>
+                </div>
+    
+            </div>
+    
+            <x-slot:actions>
+                <x-button 
+                    label="Simpan Perubahan" 
+                    type="submit" 
+                    class="btn-primary" 
+                    spinner="save_multiple"
+                />
+            </x-slot:actions>
+    
+        </x-form>
+    </x-modal>
     
     
 
@@ -234,7 +326,7 @@ new class extends Component
 
     <x-header title="Presensi Relawan" subtitle="Catat aktivitas kehadiran relawan" separator>
         <x-slot:actions>
-
+            <x-button label="Input Presensi Manual" icon="o-plus" class="btn-primary" wire:click="$set('multiple_modal', true)" />
         </x-slot:actions>
     </x-header>
 

@@ -17,6 +17,7 @@ class Attendance extends Model
         'last_check_out',
         'late_minutes',
         'work_minutes',
+        'is_overtime',
     ];
 
     protected $casts = [
@@ -26,29 +27,88 @@ class Attendance extends Model
         'last_check_out' => 'datetime',
     ];
 
-    // HELPER
     public function calculate(): void
     {
-        if (!$this->first_check_in) return;
+        if (!$this->first_check_in) {
+            return;
+        }
 
         $user = $this->user;
-
+        $checkIn = $this->first_check_in->copy();
         $date = $this->date->toDateString();
 
-        $start = Carbon::createFromFormat(
-            'Y-m-d H:i:s',
-            $date . ' ' . $user->role->checkInTime()
+        $schedules = $user->role->schedules();
+
+        $matchedStart = null;
+        $matchedEnd = null;
+
+        foreach ($schedules as $s) {
+
+            $start = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                "$date {$s['start']}"
+            );
+
+            $end = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                "$date {$s['end']}"
+            );
+
+            // Jika end < start → berarti shift lewat tengah malam
+            if ($end->lt($start)) {
+                $end->addDay();
+            }
+
+            // Jika checkin setelah tengah malam (misal 01:00) dan shift mulai kemarin
+            if ($checkIn->lt($start)) {
+                $start->subDay();
+                $end->subDay();
+            }
+
+            // Cek apakah checkin masuk dalam rentang jadwal
+            if ($checkIn->between($start, $end)) {
+                $matchedStart = $start;
+                $matchedEnd = $end;
+                break;
+            }
+
+            // Jika tidak pas di dalam, cek apakah ini kandidat paling dekat sebelum checkin (untuk kasus telat)
+            if ($checkIn->gt($start)) {
+                $matchedStart = $start;
+                $matchedEnd = $end;
+            }
+        }
+
+        // Jika tetap tidak ketemu (sangat jarang), fallback ke sesi pertama
+        if (!$matchedStart) {
+            $first = $schedules[0];
+
+            $matchedStart = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                "$date {$first['start']}"
+            );
+
+            $matchedEnd = Carbon::createFromFormat(
+                'Y-m-d H:i:s',
+                "$date {$first['end']}"
+            );
+
+            if ($matchedEnd->lt($matchedStart)) {
+                $matchedEnd->addDay();
+            }
+        }
+
+        // Hitung keterlambatan
+        $this->late_minutes = max(
+            0,
+            $matchedStart->diffInMinutes($checkIn, false)
         );
 
-        $checkIn = $this->first_check_in;
-
-        $this->late_minutes = max(0, $start->diffInMinutes($checkIn, false));
-
+        // Hitung durasi kerja
         if ($this->last_check_out) {
-
             $checkOut = $this->last_check_out->copy();
 
-            // 🔥 jika checkout < checkin → tambah 1 hari
+            // Jika checkout lebih kecil dari checkin → berarti lewat tengah malam
             if ($checkOut->lt($checkIn)) {
                 $checkOut->addDay();
             }

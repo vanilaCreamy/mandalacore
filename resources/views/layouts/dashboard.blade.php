@@ -91,7 +91,7 @@
                     @endif
 
                     @if (Auth::user()->role->name == 'PLOK')
-                        <x-menu-item title="Presensi Relawan" icon="o-users" link="{{ route('attendance.create') }}" route="attendance.create" />   
+                        <x-menu-item title="Relawan" icon="o-users" link="{{ route('user.view') }}" route="user.view" />  
                         <x-menu-item title="Suplier" icon="o-swatch" link="{{ route('vendor.index') }}" route="vendor.index" />   
                         <x-menu-item title="Bahan Baku" icon="o-circle-stack" link="{{ route('material.index') }}" route="material.index" />   
                         <x-menu-item title="Pemesanan" icon="o-tag" link="{{ route('vendor.index') }}" route="purchase.index" />   

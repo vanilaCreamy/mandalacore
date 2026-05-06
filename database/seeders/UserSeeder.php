@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
 
             // Staf Management
             ['name' => 'Kevin Egy Mayo', 'email' => 'kevin@gmail.com', 'role' => UserRole::KEPALA],
-            ['name' => 'Fuza Nur Uswah Azizah', 'email' => 'www.pudja@gmail.com', 'role' => UserRole::PLOG],
+            ['name' => 'Pudja Nur Uswah Azizah', 'email' => 'www.pudja@gmail.com', 'role' => UserRole::PLOG],
             ['name' => 'Dani Nugraha', 'email' => 'nugrahadani563@gmail.com', 'role' => UserRole::PLOK],
             ['name' => 'Mahesa Dwi Putra', 'email' => 'mahesadwi26@gmail.com', 'role' => UserRole::ASLAP],
 
@@ -42,7 +42,6 @@ class UserSeeder extends Seeder
             ['name' => 'Wini Oktaviani','email' => 'winioktaviani1998@gmail.com','role' => 'PENGOLAHAN'],
             ['name' => 'Aditia Robiana','email' => 'robiana329@gmail.com','role' => 'PENGOLAHAN'],
             ['name' => 'Yuyun Siti Yunaningsih','email' => 'sitiyunaningsihyuyun@gmail.com','role' => 'PENGOLAHAN'],
-            ['name' => 'Nene Solihat','email' => 'solihatnene@gmail.com','role' => 'PENGOLAHAN'],
             ['name' => 'Nova Yani Fauziah','email' => 'nopyanifauziah@gmail.com','role' => 'PENGOLAHAN'],
             ['name' => 'Indra Alamsyah','email' => 'ia9355894@gmail.com','role' => 'PENGOLAHAN'],
             ['name' => 'Yani','email' => 'jejenbellabellaaj@gmail.com','role' => 'PENGOLAHAN'],
@@ -73,9 +72,13 @@ class UserSeeder extends Seeder
             ['name' => 'Aprijal','email' => 'apriijall1421@gmail.com','role' => 'PENCUCIAN'],
             ['name' => 'Sultan Bara Yudayana','email' => 'sultanbara11106@gmail.com','role' => 'PENCUCIAN'],
             ['name' => 'Cucu Ernawati','email' => 'ahciu97@gmail.com','role' => 'PENCUCIAN'],
-            ['name' => 'Mimi','email' => 'm99328657@gmail.com','role' => 'PENCUCIAN'],
-            ['name' => 'Pipin','email' => 'petot9894@gmali.com','role' => 'PENCUCIAN'],
             ['name' => 'Yayah Rukiyah','email' => 'tiararizkyrahayu@gmail.com','role' => 'PENCUCIAN'],
+            
+            // KEAMANAN
+            ['name' => 'Randi','email' => 'tiararizkyrahayu@gmail.com','role' => 'PENCUCIAN'],
+            
+            // KEBERSIHAN
+            ['name' => 'Mimi','email' => 'm99328657@gmail.com','role' => 'KEBERSIHAN'],
 
 
         ];

@@ -46,11 +46,16 @@ Route::middleware(['auth'])->group(function () {
 
 
         Route::middleware(['role:ADMIN'])->group(function () {
+            
+        });
+
+        Route::middleware(['role:ADMIN,PLOK'])->group(function () {
             Route::livewire('/users', 'pages::user.users')->name('user.view');
             Route::livewire('/users/{user_id}', 'pages::user.user-detail')->name('user.detail');
         });
 
         Route::middleware(['role:PLOK'])->group(function () {
+
             Route::livewire('attendance/create','pages::attendance.attendance-create')->name('attendance.create');
             
             Route::livewire('material','pages::material.material-index')->name('material.index');

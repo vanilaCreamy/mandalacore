@@ -22,6 +22,8 @@ return new class extends Migration
             $table->timestamp('last_check_out')->nullable();
             $table->integer('late_minutes')->default(0);
             $table->integer('work_minutes')->default(0);
+            $table->boolean('is_overtime')->default(false);
+            
 
             $table->timestamps();
 
