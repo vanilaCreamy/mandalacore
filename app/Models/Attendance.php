@@ -33,68 +33,31 @@ class Attendance extends Model
             return;
         }
 
-        $user = $this->user;
         $checkIn = $this->first_check_in->copy();
-        $date = $this->date->toDateString();
+        $date = $checkIn->toDateString();
+        $schedules = $this->user->role->schedules();
 
-        $schedules = $user->role->schedules();
-
+        $bestDiff = PHP_INT_MAX;
         $matchedStart = null;
         $matchedEnd = null;
 
         foreach ($schedules as $s) {
 
-            $start = Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                "$date {$s['start']}"
-            );
+            $start = Carbon::createFromFormat('Y-m-d H:i:s', "$date {$s['start']}");
+            $end   = Carbon::createFromFormat('Y-m-d H:i:s', "$date {$s['end']}");
 
-            $end = Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                "$date {$s['end']}"
-            );
-
-            // Jika end < start → berarti shift lewat tengah malam
+            // shift lewat tengah malam
             if ($end->lt($start)) {
                 $end->addDay();
             }
 
-            // Jika checkin setelah tengah malam (misal 01:00) dan shift mulai kemarin
-            if ($checkIn->lt($start)) {
-                $start->subDay();
-                $end->subDay();
-            }
+            // 🔥 KUNCI: cari start terdekat
+            $diff = abs($checkIn->diffInMinutes($start, false));
 
-            // Cek apakah checkin masuk dalam rentang jadwal
-            if ($checkIn->between($start, $end)) {
+            if ($diff < $bestDiff) {
+                $bestDiff = $diff;
                 $matchedStart = $start;
                 $matchedEnd = $end;
-                break;
-            }
-
-            // Jika tidak pas di dalam, cek apakah ini kandidat paling dekat sebelum checkin (untuk kasus telat)
-            if ($checkIn->gt($start)) {
-                $matchedStart = $start;
-                $matchedEnd = $end;
-            }
-        }
-
-        // Jika tetap tidak ketemu (sangat jarang), fallback ke sesi pertama
-        if (!$matchedStart) {
-            $first = $schedules[0];
-
-            $matchedStart = Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                "$date {$first['start']}"
-            );
-
-            $matchedEnd = Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                "$date {$first['end']}"
-            );
-
-            if ($matchedEnd->lt($matchedStart)) {
-                $matchedEnd->addDay();
             }
         }
 
@@ -108,7 +71,6 @@ class Attendance extends Model
         if ($this->last_check_out) {
             $checkOut = $this->last_check_out->copy();
 
-            // Jika checkout lebih kecil dari checkin → berarti lewat tengah malam
             if ($checkOut->lt($checkIn)) {
                 $checkOut->addDay();
             }

@@ -77,7 +77,7 @@ class UserSeeder extends Seeder
             ['name' => 'Yayah Rukiyah','email' => 'tiararizkyrahayu@gmail.com','role' => 'PENCUCIAN'],
             
             // KEAMANAN
-            ['name' => 'Randi','email' => 'randidadus@gmail.com','role' => 'PENCUCIAN'],
+            ['name' => 'Randi Frayoga','email' => 'randidadus@gmail.com','role' => 'KEAMANAN'],
             
             // KEBERSIHAN
             ['name' => 'Mimi','email' => 'm99328657@gmail.com','role' => 'KEBERSIHAN'],

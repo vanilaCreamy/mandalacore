@@ -89,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
             Route::livewire('menu/resep','pages::recipe.index')->name('recipe.index');
         });
 
-        Route::middleware(['role:ASLAP,PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN'])->group(function () {
+        Route::middleware(['role:ASLAP,PERSIAPAN,PENGOLAHAN,PEMORSIAN,DISTRIBUSI,PENCUCIAN,KEAMANAN,KEBERSIHAN'])->group(function () {
             Route::livewire('/attendance/view','pages::attendance.attendance-index')->name('attendance.index');
         });
 
