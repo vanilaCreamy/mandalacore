@@ -37,6 +37,7 @@ class UserSeeder extends Seeder
             ['name' => 'Zidan Putra Ramadhan','email' => 'zidanputraramadhan83@gmail.com','role' => 'PERSIAPAN'],
             ['name' => 'Sri Restu Handayani','email' => 'restuhandayanisri339@gmail.com','role' => 'PERSIAPAN'],
             ['name' => 'Tuti Haryati','email' => 'tuti194720@gmail.com','role' => 'PERSIAPAN'],
+            ['name' => 'Dandi','email' => 'doankd357@gmail.com','role' => 'PERSIAPAN'],
 
             // PENGOLAHAN
             ['name' => 'Wini Oktaviani','email' => 'winioktaviani1998@gmail.com','role' => 'PENGOLAHAN'],
