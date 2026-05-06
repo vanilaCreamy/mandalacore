@@ -177,12 +177,8 @@ new class extends Component
             <div>
                 <ul class="text-sm grid grid-cols-2 gap-4">
                     <li>
-                        <h5 class="text-slate-500 text-xs font-semibold">ID SPPG</h5>
-                        <span class="text-md">ZBBERJFS</span>
-                    </li>
-                    <li>
-                        <h5 class="text-slate-500 text-xs font-semibold">No SK</h5>
-                        <span class="text-md">235.1.2025 Mandala - 7553</span>
+                        <h5 class="text-slate-500 text-xs font-semibold">No Surat Keputusan</h5>
+                        <span class="text-md">-</span>
                     </li>
                     <li>
                         <h5 class="text-slate-500 text-xs font-semibold">SPPG</h5>
