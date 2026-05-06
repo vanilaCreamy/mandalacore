@@ -46,7 +46,7 @@
     
             {{-- Right side actions --}}
             <x-slot:actions>
-                <x-dropdown right>
+                <x-dropdown>
                     <x-slot:trigger>
                         <x-button icon="o-bell" class="btn-circle" />
                     </x-slot:trigger>
