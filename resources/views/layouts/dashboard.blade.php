@@ -104,7 +104,7 @@
                         <x-menu-item title="Manajemen Distribusi" icon="o-truck" link="{{ route('distribution.index') }}" route="distribution.index" />   
                     @endif
 
-                    @if (in_array(Auth::user()->role->name, ['ASLAP','PERSIAPAN', 'PENGOLAHAN', 'PEMORSIAN','DISTRIBUSI', 'PENCUCIAN']))
+                    @if (in_array(Auth::user()->role->name, ['ASLAP','PERSIAPAN', 'PENGOLAHAN', 'PEMORSIAN','DISTRIBUSI', 'PENCUCIAN', 'KEAMANAN', 'KEBERSIHAN']))
                         <x-menu-item title="Absensi" icon="o-calendar-days" link="{{ route('attendance.index') }}" route="attendance.index" />   
                     @endif
 
