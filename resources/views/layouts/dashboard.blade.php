@@ -108,8 +108,14 @@
                         <x-menu-item title="Absensi" icon="o-calendar-days" link="{{ route('attendance.index') }}" route="attendance.index" />   
                     @endif
 
+                    @if (Auth::user()->role->name == 'KEAMANAN')
+                        <x-menu-item title="Laporan Kegiatan" disabled icon="o-document-text" link="#" />   
+                        <x-menu-item title="Laporan Khusus" disabled icon="o-document-plus" link="#" />   
+                        <x-menu-item title="Buku Tamu" disabled icon="o-users" link="#" />   
+                    @endif
+
                     @if (Auth::user()->role->name == 'DISTRIBUSI')
-                        <x-menu-item title="Distribusi" disabled icon="o-users" link="{{ route('distribution.index') }}" route="distribution.index" />   
+                        <x-menu-item title="Distribusi" disabled icon="o-truck" link="{{ route('distribution.index') }}" route="distribution.index" />   
                     @endif
 
                     <x-menu-separator />
