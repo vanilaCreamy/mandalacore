@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             ['name' => 'Pudja Nur Uswah Azizah', 'email' => 'www.pudja@gmail.com', 'role' => UserRole::PLOG],
             ['name' => 'Dani Nugraha', 'email' => 'nugrahadani563@gmail.com', 'role' => UserRole::PLOK],
             ['name' => 'Mahesa Dwi Putra', 'email' => 'mahesadwi26@gmail.com', 'role' => UserRole::ASLAP],
+            ['name' => 'Fitra Dandi Mayo', 'email' => 'dandimayo301@gmail.com', 'role' => UserRole::ASLAP],
 
             // Operasional
 
